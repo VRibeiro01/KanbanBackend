@@ -1,16 +1,11 @@
-import json
 import sqlite3
 
 from flask import request
 from password_strength import PasswordPolicy
 
-from app.Models.User import User
 from app.db.database_user import database_user
 from app.db.database_board import database_board
 from app import app
-
-server_adress = "http://localhost/"
-base_path = "."
 
 policy = PasswordPolicy.from_names(
     length=8,
@@ -52,6 +47,15 @@ def get_user_by_user_id(user_id):
         return database_user.get_by_user_id(user_id).to_json()
     except AttributeError:
         return "user was not found", 404
+
+
+@app.route('/user/<user_id>', methods=['PUT'])
+def update_user_by_user_id(user_id):
+    json_payload = request.json
+    username = json_payload['username']
+    password = json_payload['password']
+    return database_user.update_user_by_user_id(user_id, username, password)
+
 
 @app.route('/user/<user_id>/boards', methods=['GET'])
 def get_boards_from_user_by_user_id(user_id):

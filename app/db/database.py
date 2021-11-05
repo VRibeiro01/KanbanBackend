@@ -46,4 +46,3 @@ class DataBase:
         except sqlite3.OperationalError:
             print("Invalid query: " + query)
             return None
-        return None

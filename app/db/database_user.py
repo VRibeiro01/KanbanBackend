@@ -1,5 +1,3 @@
-import os
-import datetime
 import sqlite3
 
 from app.Models.User import User
@@ -26,7 +24,6 @@ class database_user:
     def get_by_user_name(user_name):
         query = "SELECT * FROM USER WHERE USERNAME = '{}'".format(user_name)
         answer = DataBase.make_multi_response_query(query, database_user.path)
-        print(answer)
         if answer and len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
@@ -36,6 +33,13 @@ class database_user:
                 return user_obj
         else:
             AttributeError()
+
+    @staticmethod
+    def update_user_by_user_id(user_id, username, password):
+        query = "UPDATE USER SET USERNAME = '{}', PASSWORD = '{}' WHERE USER_ID = {}".format(username, password, user_id)
+        DataBase.make_no_response_query(query, database_user.path)
+        response = database_user.get_by_user_id(user_id).to_json()
+        return response
 
     @staticmethod
     def get_by_user_id(user_id):
