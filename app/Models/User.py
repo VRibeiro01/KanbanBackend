@@ -8,6 +8,6 @@ class User:
         self.username = username
         self.password = password
 
-    def toJson(self):
+    def to_json(self):
         return {"user_id": self.user_id, "username": self.username,  "password": self.password}
 

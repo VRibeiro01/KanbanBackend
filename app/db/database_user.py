@@ -2,6 +2,7 @@ import os
 import datetime
 import sqlite3
 
+from app.Models.User import User
 from app.db.database import DataBase
 
 
@@ -23,13 +24,32 @@ class database_user:
 
     @staticmethod
     def get_by_user_name(user_name):
-        query = "SELECT * FROM USER WHERE USERNAME = {}".format(user_name)
-        return DataBase.make_multi_response_query(query, database_user.path)
+        query = "SELECT * FROM USER WHERE USERNAME = '{}'".format(user_name)
+        answer = DataBase.make_multi_response_query(query, database_user.path)
+        print(answer)
+        if answer and len(answer) == 1:
+            user_obj = answer[0]
+            if user_obj:
+                user = User(int(user_obj[0]), user_obj[1], user_obj[2])
+                return user
+            else:
+                return user_obj
+        else:
+            AttributeError()
 
     @staticmethod
     def get_by_user_id(user_id):
         query = "SELECT * FROM USER WHERE USER_ID = {}".format(user_id)
-        return DataBase.make_multi_response_query(query, database_user.path)
+        answer = DataBase.make_multi_response_query(query, database_user.path)
+        if len(answer) == 1:
+            user_obj = answer[0]
+            if user_obj:
+                user = User(int(user_obj[0]), user_obj[1], user_obj[2])
+                return user
+            else:
+                return user_obj
+        else:
+            AttributeError()
 
     @staticmethod
     def insert_attempt(username, pw):
@@ -40,5 +60,5 @@ class database_user:
         user_id = cursor.lastrowid
         connection.commit()
         connection.close()
-        return database_user.get_by_user_id(user_id)[0]
+        return database_user.get_by_user_id(user_id)
 
