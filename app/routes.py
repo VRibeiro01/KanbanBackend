@@ -39,6 +39,12 @@ def add_user():
         return database_user.insert_attempt(username, password).to_json()
     except sqlite3.IntegrityError:
         return "username already exist", 300
+@app.route('/user/<user_id>',methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        return database_user.delete_user_by_user_id(user_id).to_json()
+    except AttributeError:
+        return "user was not found", 404
 
 
 @app.route('/user/<user_id>', methods=['GET'])

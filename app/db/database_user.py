@@ -33,7 +33,12 @@ class database_user:
                 return user_obj
         else:
             AttributeError()
-
+    @staticmethod
+    def delete_user_by_user_id(user_id):
+        query = "Delete From USER WHERE USER_ID = {}".format(user_id)
+        response = database_user.get_by_user_id(user_id)
+        DataBase.make_no_response_query(query,database_user.path)
+        return response
     @staticmethod
     def update_user_by_user_id(user_id, username, password):
         query = "UPDATE USER SET USERNAME = '{}', PASSWORD = '{}' WHERE USER_ID = {}".format(username, password, user_id)
