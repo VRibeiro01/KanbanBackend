@@ -62,6 +62,17 @@ def update_user_by_user_id(user_id):
     password = json_payload['password']
     return database_user.update_user_by_user_id(user_id, username, password)
 
+@app.route('/user/<user_id>/check_pw', methods=['GET'])
+def check_pw(user_id):
+    password = request.args.get("password")
+    try:
+        user = database_user.get_by_user_id(user_id)
+        if user.password == password:
+            return "password is correct",200
+        else:
+            return "password is not correct", 404
+    except AttributeError:
+        return "user was not found", 404
 
 @app.route('/user/<user_id>/boards', methods=['GET'])
 def get_boards_from_user_by_user_id(user_id):
