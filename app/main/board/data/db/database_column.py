@@ -1,11 +1,11 @@
 import sqlite3
 
-from app.db.database import DataBase
+from app.general.database import DataBase
 
 
 class database_column:
 
-    path = DataBase.base_path + '/dbs/database.db'
+    path = DataBase.base_path + '/dbs/database.general'
 
     @staticmethod
     def create_db():

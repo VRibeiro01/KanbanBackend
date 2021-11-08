@@ -1,12 +1,12 @@
 import sqlite3
 
-from app.Models.User import User
-from app.db.database import DataBase
+from app.main.user.data.models.User import User
+from app.general.database import DataBase
 
 
 class database_user:
 
-    path = DataBase.base_path + '/dbs/database.db'
+    path = DataBase.base_path + '/dbs/database.general'
 
     @staticmethod
     def create_db():
