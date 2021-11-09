@@ -3,8 +3,8 @@ import sqlite3
 from flask import request
 from password_strength import PasswordPolicy
 
-from app.db.database_user import database_user
-from app.db.database_board import database_board
+from app.main.user.data.db.database_user import database_user
+from app.main.board.data.db.database_board import database_board
 from app import app
 
 policy = PasswordPolicy.from_names(
