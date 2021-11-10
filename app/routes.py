@@ -39,6 +39,7 @@ def add_user():
         return database_user.insert_attempt(username, password).to_json()
     except sqlite3.IntegrityError:
         return "username already exist", 300
+
 @app.route('/user/<user_id>',methods=['DELETE'])
 def delete_user(user_id):
     try:
@@ -98,3 +99,12 @@ def get_board_by_id(board_id):
         return database_board.get_by_board_id(board_id).to_json()
     except AttributeError:
         return "Board was not found", 404
+
+@app.route('/board/<board_id>', methods=['DELETE'])
+def delete_board_by_id(board_id):
+    try:
+        return database_board.delete_board(board_id).to_json()
+    except AttributeError:
+        return "Board was not found"
+
+

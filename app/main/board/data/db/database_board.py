@@ -46,3 +46,10 @@ class database_board:
             return database_board.get_by_board_id(board_id)
         except Exception:
             return "board already exist", 405
+
+    @staticmethod
+    def delete_board(board_id):
+       query = "Delete From BOARD WHERE BOARD_ID = {}".format(board_id)
+       response = database_board.get_by_board_id(board_id)
+       DataBase.make_no_response_query(query, database_board.path)
+       return response
