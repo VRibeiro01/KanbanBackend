@@ -91,3 +91,10 @@ def create_board_to_user():
         return database_board.insert_attempt(user_id, title).to_json()
     except AttributeError:
         return "user was not found", 404
+
+@app.route('/board/<board_id>', methods=['GET'])
+def get_board_by_id(board_id):
+    try:
+        return database_board.get_by_board_id(board_id).to_json()
+    except AttributeError:
+        return "Board was not found", 404

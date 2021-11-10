@@ -27,6 +27,7 @@ class database_board:
         return Board(response[0][0], response[0][1], response[0][2])
 
 
+
     @staticmethod
     def get_by_user_id(user_id):
         query = "SELECT * FROM BOARD WHERE USER_ID = {}".format(user_id)
