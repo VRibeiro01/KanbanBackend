@@ -1,5 +1,6 @@
 import sqlite3
 
+from app.main.board.data.models.Board import Board
 from app.main.user.data.models.User import User
 from app.general.database import DataBase
 
@@ -70,4 +71,7 @@ class database_user:
         connection.commit()
         connection.close()
         return database_user.get_by_user_id(user_id)
+
+
+
 

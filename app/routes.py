@@ -7,6 +7,8 @@ from app.main.user.data.db.database_user import database_user
 from app.main.board.data.db.database_board import database_board
 from app import app
 
+import json
+
 policy = PasswordPolicy.from_names(
     length=8,
     uppercase=1,
@@ -75,12 +77,6 @@ def check_pw(user_id):
     except AttributeError:
         return "user was not found", 404
 
-@app.route('/user/<user_id>/boards', methods=['GET'])
-def get_boards_from_user_by_user_id(user_id):
-    try:
-        return database_board.get_by_user_id(user_id).to_json()
-    except AttributeError:
-        return "user was not found", 404
 
 @app.route('/board', methods=['POST'])
 def create_board_to_user():
@@ -106,5 +102,21 @@ def delete_board_by_id(board_id):
         return database_board.delete_board(board_id).to_json()
     except AttributeError:
         return "Board was not found"
+
+@app.route('/board/<board_id>', methods=['PUT'])
+def update_board_by_board_id(board_id):
+    json_payload = request.json
+    title = json_payload['title']
+    owner_id = json_payload['owner_id']
+    return database_board.update_board(board_id,owner_id,title).to_json()
+
+@app.route('/user/<user_id>/boards', methods=['GET'])
+def get_boards_by_user_id(user_id):
+
+        boards = database_board.get_boards_by_user(user_id)
+        print(json.dumps(boards))
+        return json.dumps(boards)
+
+
 
 

@@ -53,3 +53,28 @@ class database_board:
        response = database_board.get_by_board_id(board_id)
        DataBase.make_no_response_query(query, database_board.path)
        return response
+
+    @staticmethod
+    def update_board(board_id, owner_id, title):
+        query = "UPDATE BOARD SET USER_ID = '{}', TITLE = '{}' WHERE BOARD_ID = {}".format(owner_id, title, board_id)
+        DataBase.make_no_response_query(query, database_board.path)
+        response = database_board.get_by_board_id(board_id)
+        return response
+
+    @staticmethod
+    def get_boards_by_user(user_id):
+        query = "SELECT * FROM BOARD WHERE USER_ID = {}".format(user_id)
+        answer = DataBase.make_multi_response_query(query, database_board.path)
+        board_count = len(answer)
+        boards_list = []
+        x = 0
+        while x < board_count:
+            b_id = answer[x][0]
+            u_id = answer[x][1]
+            title = answer[x][2]
+            board_element = Board(b_id, u_id, title).to_json()
+            boards_list.append( board_element)
+            x += 1
+
+        return boards_list
+
