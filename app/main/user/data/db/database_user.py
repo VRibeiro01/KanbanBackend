@@ -18,7 +18,7 @@ class database_user:
                   ")"
             DataBase.make_no_response_query(sql, database_user.path)
         except sqlite3.OperationalError:
-            print("Table Exists")
+            print("Table User Exists")
 
     @staticmethod
     def get_by_user_name(user_name):
