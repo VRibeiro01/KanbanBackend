@@ -8,7 +8,7 @@ class User:
         self.username = username
         self.password = password
 
-    def to_json(self):
-        return {"user_id": self.user_id, "username": self.username,  "password": self.password}
+    def __repr__(self):
+        return str({"user_id": self.user_id, "username": self.username,  "password": self.password}).replace("'", "\"")
 
 
