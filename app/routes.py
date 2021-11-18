@@ -5,6 +5,7 @@ from password_strength import PasswordPolicy
 
 from app.main.user.data.db.database_user import database_user
 from app.main.board.data.db.database_board import database_board
+from app.main.board.data.db.database_column import database_column
 from app import app
 
 import json
@@ -18,6 +19,7 @@ policy = PasswordPolicy.from_names(
 
 database_user.create_db()
 database_board.create_db()
+database_column.create_db()
 
 
 @app.route('/user', methods=['GET'])
@@ -112,10 +114,15 @@ def update_board_by_board_id(board_id):
 
 @app.route('/user/<user_id>/boards', methods=['GET'])
 def get_boards_by_user_id(user_id):
-
         boards = database_board.get_boards_by_user(user_id)
         print(json.dumps(boards))
         return json.dumps(boards)
+
+@app.route('/board/<board_id>/columns', methods=['GET'])
+def get_columns_by_board_id(board_id):
+    columns = database_column.get_by_board_id(board_id)
+    print(json.dumps(columns))
+    return json.dumps(columns)
 
 
 
