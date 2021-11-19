@@ -1,13 +1,13 @@
 import sqlite3
+from sqlite3 import OperationalError
 
-from app.main.board.data.models.Board import Board
 from app.main.user.data.models.User import User
 from app.general.database import DataBase
 
 
-class database_user:
+class DatabaseUser:
 
-    path = DataBase.base_path + '/dbs/database.general'
+    path = DataBase.base_path + '/dbs/database'
 
     @staticmethod
     def create_db():
@@ -17,14 +17,14 @@ class database_user:
                     "USERNAME TEXT UNIQUE NOT NULL, " \
                     "PASSWORD TEXT NOT NULL" \
                   ")"
-            DataBase.make_no_response_query(sql, database_user.path)
-        except sqlite3.OperationalError:
+            DataBase.make_no_response_query(sql, DatabaseUser.path)
+        except OperationalError:
             print("Table User Exists")
 
     @staticmethod
     def get_by_user_name(user_name):
         query = "SELECT * FROM USER WHERE USERNAME = '{}'".format(user_name)
-        answer = DataBase.make_multi_response_query(query, database_user.path)
+        answer = DataBase.make_multi_response_query(query, DatabaseUser.path)
         if answer and len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
@@ -34,23 +34,25 @@ class database_user:
                 return user_obj
         else:
             AttributeError()
+
     @staticmethod
     def delete_user_by_user_id(user_id):
-        query = "Delete From USER WHERE USER_ID = {}".format(user_id)
-        response = database_user.get_by_user_id(user_id)
-        DataBase.make_no_response_query(query,database_user.path)
+        response = DatabaseUser.get_by_user_id(user_id)
+        print("user:", response)
+        query = "DELETE FROM USER WHERE USER_ID = {}".format(user_id)
+        DataBase.make_no_response_query(query, DatabaseUser.path)
         return response
+
     @staticmethod
     def update_user_by_user_id(user_id, username, password):
         query = "UPDATE USER SET USERNAME = '{}', PASSWORD = '{}' WHERE USER_ID = {}".format(username, password, user_id)
-        DataBase.make_no_response_query(query, database_user.path)
-        response = database_user.get_by_user_id(user_id).to_json()
-        return response
+        DataBase.make_no_response_query(query, DatabaseUser.path)
+        return str(DatabaseUser.get_by_user_id(user_id))
 
     @staticmethod
     def get_by_user_id(user_id):
         query = "SELECT * FROM USER WHERE USER_ID = {}".format(user_id)
-        answer = DataBase.make_multi_response_query(query, database_user.path)
+        answer = DataBase.make_multi_response_query(query, DatabaseUser.path)
         if len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
@@ -62,16 +64,13 @@ class database_user:
             AttributeError()
 
     @staticmethod
-    def insert_attempt(username, pw):
-        connection = sqlite3.connect(database_user.path)
+    def insert_user(username, pw):
+        connection = sqlite3.connect(DatabaseUser.path)
         cursor = connection.cursor()
         query = "INSERT INTO USER(USERNAME, PASSWORD) VALUES('{}','{}')".format(username, pw)
         cursor.execute(query)
         user_id = cursor.lastrowid
         connection.commit()
         connection.close()
-        return database_user.get_by_user_id(user_id)
-
-
-
+        return DatabaseUser.get_by_user_id(user_id)
 

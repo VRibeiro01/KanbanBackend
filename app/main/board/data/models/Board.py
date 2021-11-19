@@ -8,8 +8,7 @@ class Board:
         self.owner_id = owner_id
         self.title = title
 
-    def to_json(self):
-        return {"board_id": self.board_id, "owner_id": self.owner_id,  "title": self.title}
-
+    def __repr__(self):
+        return str({"board_id": self.board_id, "owner_id": self.owner_id,  "title": self.title}).replace("'", "\"")
 
 

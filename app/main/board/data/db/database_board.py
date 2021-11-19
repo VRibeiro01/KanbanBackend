@@ -4,9 +4,9 @@ from app.general.database import DataBase
 from app.main.board.data.models.Board import Board
 
 
-class database_board:
+class DatabaseBoard:
 
-    path = DataBase.base_path + '/dbs/database.general'
+    path = DataBase.base_path + '/dbs/database'
 
     @staticmethod
     def create_db():
@@ -16,66 +16,55 @@ class database_board:
                   "USER_ID INTEGER NOT NULL," \
                   "TITLE TEXT NOT NULL" \
                   ")"
-            DataBase.make_no_response_query(sql, database_board.path)
+            DataBase.make_no_response_query(sql, DatabaseBoard.path)
         except sqlite3.OperationalError:
             print("Table Board Exists")
 
     @staticmethod
     def get_by_board_id(board_id):
         query = "SELECT * FROM BOARD WHERE BOARD_ID = {}".format(board_id)
-        response = DataBase.make_multi_response_query(query, database_board.path)
-        return Board(response[0][0], response[0][1], response[0][2])
-
-
+        answer = DataBase.make_multi_response_query(query, DatabaseBoard.path)
+        if len(answer) == 1:
+            user_obj = answer[0]
+            if user_obj:
+                board = Board(int(user_obj[0]), int(user_obj[1]), user_obj[2])
+                return board
+            else:
+                return user_obj
+        else:
+            AttributeError()
 
     @staticmethod
     def get_by_user_id(user_id):
         query = "SELECT * FROM BOARD WHERE USER_ID = {}".format(user_id)
-        return DataBase.make_multi_response_query(query, database_board.path)
+        mock_board_list = DataBase.make_multi_response_query(query, DatabaseBoard.path)
+        board_list = []
+        for board in mock_board_list:
+            board_list.append(Board(int(board[0]), int(board[1]), board[2]))
+        return board_list
 
     @staticmethod
-    def insert_attempt(user_id, title):
-        try:
-            connection = sqlite3.connect(database_board.path)
-            cursor = connection.cursor()
-            query = "INSERT INTO BOARD(USER_ID, TITLE) VALUES('{}','{}')".format(user_id, title)
-            cursor.execute(query)
-            board_id = cursor.lastrowid
-            connection.commit()
-            connection.close()
-            return database_board.get_by_board_id(board_id)
-        except Exception:
-            return "board already exist", 405
-
-    @staticmethod
-    def delete_board(board_id):
-       query = "Delete From BOARD WHERE BOARD_ID = {}".format(board_id)
-       response = database_board.get_by_board_id(board_id)
-       DataBase.make_no_response_query(query, database_board.path)
-       return response
-
-    @staticmethod
-    def update_board(board_id, owner_id, title):
-        query = "UPDATE BOARD SET USER_ID = '{}', TITLE = '{}' WHERE BOARD_ID = {}".format(owner_id, title, board_id)
-        DataBase.make_no_response_query(query, database_board.path)
-        response = database_board.get_by_board_id(board_id)
+    def update_board_by_board_id(board_id, user_id, title):
+        query = "UPDATE BOARD SET USER_ID = '{}', TITLE = '{}' WHERE BOARD_ID = {}" \
+            .format(user_id, title, board_id)
+        DataBase.make_no_response_query(query, DatabaseBoard.path)
+        response = str(DatabaseBoard.get_by_board_id(board_id))
         return response
 
     @staticmethod
-    def get_boards_by_user(user_id):
-        query = "SELECT * FROM BOARD WHERE USER_ID = {}".format(user_id)
-        answer = DataBase.make_multi_response_query(query, database_board.path)
-        board_count = len(answer)
-        boards_list = []
-        x = 0
-        while x < board_count:
-            b_id = answer[x][0]
-            u_id = answer[x][1]
-            title = answer[x][2]
-            board_element = Board(b_id, u_id, title).to_json()
-            boards_list.append( board_element)
-            x += 1
+    def delete_board_by_board_id(board_id):
+        query = "DELETE FROM BOARD WHERE BOARD_ID = {}".format(board_id)
+        response = DatabaseBoard.get_by_board_id(board_id)
+        DataBase.make_no_response_query(query, DatabaseBoard.path)
+        return response
 
-        return boards_list
-
-
+    @staticmethod
+    def insert_board(user_id, title):
+        connection = sqlite3.connect(DatabaseBoard.path)
+        cursor = connection.cursor()
+        query = "INSERT INTO BOARD(USER_ID, TITLE) VALUES('{}','{}')".format(user_id, title)
+        cursor.execute(query)
+        user_id = cursor.lastrowid
+        connection.commit()
+        connection.close()
+        return DatabaseBoard.get_by_board_id(user_id)
