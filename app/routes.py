@@ -75,7 +75,7 @@ def check_pw(user_id):
     try:
         user = DatabaseUser.get_by_user_id(user_id)
         if user.password == password:
-            return "password is correct",200
+            return "password is correct", 200
         else:
             return "password is not correct", 404
     except AttributeError:
@@ -121,6 +121,84 @@ def delete_board(board_id):
 @app.route('/board/<board_id>/columns', methods=['GET'])
 def get_columns_from_board_by_board_id(board_id):
     try:
-        return DatabaseColumn.get_by_board_id(board_id).to_json()
+        return str(DatabaseColumn.get_by_board_id(board_id))
     except AttributeError:
         return "user was not found", 404
+
+# --------------------------COLUMNS-------------------------------------------
+
+
+@app.route('/column', methods=['POST'])
+def add_column():
+    json_payload = request.json
+    board_id = int(json_payload['board_id'])
+    title = json_payload['title']
+    position = int(json_payload['position'])
+    try:
+        return str(DatabaseColumn.insert_column(board_id, title, position))
+    except sqlite3.IntegrityError:
+        return "board already exist", 300
+
+
+@app.route('/column/<column_id>', methods=['GET'])
+def get_column_by_column_id(column_id):
+    return str(DatabaseColumn.get_by_column_id(column_id))
+
+
+@app.route('/column/<column_id>', methods=['PUT'])
+def update_column_by_column_id(column_id):
+    json_payload = request.json
+    board_id = int(json_payload['board_id'])
+    title = json_payload['title']
+    position = int(json_payload['position'])
+    return DatabaseColumn.update_column_by_column_id(column_id, board_id, title, position)
+
+
+@app.route('/column/<column_id>', methods=['DELETE'])
+def delete_column(column_id):
+    return str(DatabaseColumn.delete_column_by_column_id(column_id))
+
+
+@app.route('/column/<column_id>/tasks', methods=['GET'])
+def get_tasks_from_column_by_column_id(board_id):
+    try:
+        return str(DatabaseTask.get_by_column_id(board_id))
+    except AttributeError:
+        return "user was not found", 404
+
+
+# --------------------------TASKS-------------------------------------------
+
+@app.route('/task', methods=['POST'])
+def add_task():
+    json_payload = request.json
+    column_id = int(json_payload['column_id'])
+    worker = int(json_payload['worker'])
+    title = json_payload['title']
+    prio = int(json_payload['prio'])
+    position = int(json_payload['position'])
+    try:
+        return str(DatabaseTask.insert_task(column_id, worker, title, prio, position))
+    except sqlite3.IntegrityError:
+        return "board already exist", 300
+
+
+@app.route('/task/<task_id>', methods=['GET'])
+def get_task_by_task_id(task_id):
+    return str(DatabaseTask.get_by_task_id(task_id))
+
+
+@app.route('/task/<task_id>', methods=['PUT'])
+def update_task_by_task_id(task_id):
+    json_payload = request.json
+    worker = int(json_payload['worker'])
+    title = json_payload['title']
+    prio = int(json_payload['prio'])
+    position = int(json_payload['position'])
+    return DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position)
+
+
+@app.route('/task/<task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    return str(DatabaseTask.delete_task_by_task_id(task_id))
+

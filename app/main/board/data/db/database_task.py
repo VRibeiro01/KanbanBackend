@@ -34,7 +34,7 @@ class DatabaseTask:
         return DataBase.make_multi_response_query(query, DatabaseTask.path)
 
     @staticmethod
-    def update_user_by_task_id(task_id, user_id, title, prio, position):
+    def update_task_by_task_id(task_id, user_id, title, prio, position):
         query = "UPDATE TASK SET WORKER = '{}', TITLE = '{}', PRIO = '{}', POSITION = '{}' WHERE TASK_ID = {}"\
             .format(user_id, title, prio, position, task_id)
         DataBase.make_no_response_query(query, DatabaseTask.path)
@@ -42,7 +42,7 @@ class DatabaseTask:
         return response
 
     @staticmethod
-    def delete_user_by_task_id(task_id):
+    def delete_task_by_task_id(task_id):
         query = "DELETE FROM TASK WHERE TASK_ID = {}".format(task_id)
         response = DatabaseTask.get_by_task_id(task_id)
         DataBase.make_no_response_query(query, DatabaseTask.path)
