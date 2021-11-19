@@ -187,6 +187,12 @@ def add_task():
 def get_task_by_task_id(task_id):
     return str(DatabaseTask.get_by_task_id(task_id))
 
+@app.route('/board/<board_id>/columns', methods=['GET'])
+def get_columns_by_board_id(board_id):
+    columns = database_column.get_by_board_id(board_id)
+    print(json.dumps(columns))
+    return json.dumps(columns)
+
 
 @app.route('/task/<task_id>', methods=['PUT'])
 def update_task_by_task_id(task_id):

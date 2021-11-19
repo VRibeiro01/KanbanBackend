@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import OperationalError
 
 from app.general.database import DataBase
+from app.main.board.data.models.Column import Column
 
 
 class DatabaseColumn:
