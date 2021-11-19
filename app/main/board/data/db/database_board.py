@@ -37,9 +37,9 @@ class DatabaseBoard:
     @staticmethod
     def get_by_user_id(user_id):
         query = "SELECT * FROM BOARD WHERE USER_ID = {}".format(user_id)
-        moack_board_list = DataBase.make_multi_response_query(query, DatabaseBoard.path)
+        mock_board_list = DataBase.make_multi_response_query(query, DatabaseBoard.path)
         board_list = []
-        for board in moack_board_list:
+        for board in mock_board_list:
             board_list.append(Board(int(board[0]), int(board[1]), board[2]))
         return board_list
 
