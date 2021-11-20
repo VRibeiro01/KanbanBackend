@@ -32,6 +32,6 @@ before_script:
 
 test:
   script:
-    - python app/test/test_user.py test
+    - coverage run --source=app -m unittest tests/test_user.py
     - pip install tox flake8  # you can also use tox
     - tox -e py36,flake8
