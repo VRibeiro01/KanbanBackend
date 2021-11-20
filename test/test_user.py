@@ -1,9 +1,7 @@
 import json
 from json import JSONDecodeError
 
-from flask import template_rendered
-
-from app import app, db, routes
+from app import app
 import unittest
 
 from app.main.board.data.db.database_board import DatabaseBoard
@@ -17,13 +15,13 @@ class UserTests(unittest.TestCase):
     def setUp(self):
         self.app = app
         self.client = self.app.test_client()
-        DatabaseUser.path = '../../dbs/database_test'
+        DatabaseUser.path = '../dbs/database_test'
         DatabaseUser.create_db()
-        DatabaseBoard.path = '../../dbs/database_test'
+        DatabaseBoard.path = '../dbs/database_test'
         DatabaseBoard.create_db()
-        DatabaseColumn.path = '../../dbs/database_test'
+        DatabaseColumn.path = '../dbs/database_test'
         DatabaseColumn.create_db()
-        DatabaseTask.path = '../../dbs/database_test'
+        DatabaseTask.path = '../dbs/database_test'
         DatabaseTask.create_db()
 
     def tearDown(self):
