@@ -10,11 +10,6 @@ class Column:
         self.title = title
         self.position = position
 
-    def to_json(self):
-        return \
-            {"column_id": self.column_id,
-             "board_id": self.board_id,
-             "title": self.title,
-             "position": self.position
-             }
+    def __repr__(self):
+        return str({"column_id": self.column_id, "board_id": self.board_id, "title": self.title, "position": self.position}).replace("'", "\"")
 

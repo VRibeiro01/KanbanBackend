@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import OperationalError
 
 from app.general.database import DataBase
+from app.main.board.data.models.Column import Column
 
 
 class DatabaseColumn:
@@ -22,26 +23,47 @@ class DatabaseColumn:
             print("TABLE COLUMN EXISTS")
 
     @staticmethod
+    def drop_db():
+        try:
+            sql = "DROP TABLE COLUMN"
+            DataBase.make_no_response_query(sql, DatabaseColumn.path)
+        except OperationalError:
+            print("Table Column dont Exists")
+
+    @staticmethod
     def get_by_board_id(board_id):
         query = "SELECT * FROM COLUMN WHERE BOARD_ID = {}".format(board_id)
-        return DataBase.make_multi_response_query(query, DatabaseColumn.path)
+        mock_column_list = DataBase.make_multi_response_query(query, DatabaseColumn.path)
+        board_list = []
+        for column in mock_column_list:
+            board_list.append(Column(int(column[0]), int(column[1]), column[2], column[3]))
+        return board_list
 
     @staticmethod
     def get_by_column_id(column_id):
         query = "SELECT * FROM COLUMN WHERE COLUMN_ID = {}".format(column_id)
-        return DataBase.make_multi_response_query(query, DatabaseColumn.path)
+        answer = DataBase.make_multi_response_query(query, DatabaseColumn.path)
+        if len(answer) == 1:
+            user_obj = answer[0]
+            if user_obj:
+                column = Column(int(user_obj[0]), int(user_obj[1]), user_obj[2], int(user_obj[3]))
+                return column
+            else:
+                return user_obj
+        else:
+            AttributeError()
 
     @staticmethod
     def update_column_by_column_id(column_id, board_id, title, position):
         query = "UPDATE COLUMN SET BOARD_ID = '{}', TITLE = '{}', POSITION = '{}' WHERE COLUMN_ID = {}" \
             .format(board_id, title, position, column_id)
         DataBase.make_no_response_query(query, DatabaseColumn.path)
-        response = DatabaseColumn.get_by_column_id(column_id).to_json()
+        response = DatabaseColumn.get_by_column_id(column_id)
         return response
 
     @staticmethod
     def delete_column_by_column_id(column_id):
-        query = "DELETE FROM TASK WHERE COLUMN_ID = {}".format(column_id)
+        query = "DELETE FROM COLUMN WHERE COLUMN_ID = {}".format(column_id)
         response = DatabaseColumn.get_by_column_id(column_id)
         DataBase.make_no_response_query(query, DatabaseColumn.path)
         return response

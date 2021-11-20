@@ -14,13 +14,6 @@ class Task:
         self.prio = prio
         self.position = position
 
-    def to_json(self):
-        return \
-            {"task_id": self.task_id,
-             "column_id": self.column_id,
-             "worker": self.worker,
-             "title": self.title,
-             "prio": self.prio,
-             "position": self.position
-             }
+    def __repr__(self):
+        return str({"task_id": self.task_id, "column_id": self.column_id, "worker": self.worker, "title": self.title, "prio": self.prio, "position": self.position}).replace("'", "\"")
 
