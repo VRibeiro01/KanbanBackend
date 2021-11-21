@@ -1,3 +1,4 @@
 flask
 bcrypt
 password_strength
+pytest==5.3.5
