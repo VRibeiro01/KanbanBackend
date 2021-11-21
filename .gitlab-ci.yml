@@ -14,7 +14,7 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 # Pip's cache doesn't store the python packages
-# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+  # https://pip.pypa.io/en/stable/reference/pip_install/#caching
 #
 # If you want to also cache the installed packages, you have to install
 # them in a virtualenv and cache it as well.
@@ -25,8 +25,34 @@ cache:
 
 before_script:
   - python -V  # Print out python version for debugging
-  - python --version
-  - pip install -r requirements.txt
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
 
+test:
+  script:
+   - python setup.py test
+   - pip install tox flake8  # you can also use tox
+   - tox -e py36,flake8
 
+run:
+  script:
+    - python setup.py bdist_wheel
+    # an alternative approach is to install and run:
+    - pip install dist/*
+    # run the command here
+  artifacts:
+    paths:
+      - dist/*.whl
 
+pages:
+  script:
+    - pip install sphinx sphinx-rtd-theme
+    - cd doc ; make html
+    - mv build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    
