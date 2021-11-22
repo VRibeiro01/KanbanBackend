@@ -1,5 +1,6 @@
 import sqlite3
 
+from sqlite3 import OperationalError
 from app.general.database import DataBase
 from app.main.board.data.models.Board import Board
 
@@ -17,8 +18,16 @@ class DatabaseBoard:
                   "TITLE TEXT NOT NULL" \
                   ")"
             DataBase.make_no_response_query(sql, DatabaseBoard.path)
-        except sqlite3.OperationalError:
+        except OperationalError:
             print("Table Board Exists")
+
+    @staticmethod
+    def drop_db():
+        try:
+            sql = "DROP TABLE BOARD"
+            DataBase.make_no_response_query(sql, DatabaseBoard.path)
+        except OperationalError:
+            print("Table Board dont Exists")
 
     @staticmethod
     def get_by_board_id(board_id):

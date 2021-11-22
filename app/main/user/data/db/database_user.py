@@ -22,6 +22,14 @@ class DatabaseUser:
             print("Table User Exists")
 
     @staticmethod
+    def drop_db():
+        try:
+            sql = "DROP TABLE USER"
+            DataBase.make_no_response_query(sql, DatabaseUser.path)
+        except OperationalError:
+            print("Table User dont Exists")
+
+    @staticmethod
     def get_by_user_name(user_name):
         query = "SELECT * FROM USER WHERE USERNAME = '{}'".format(user_name)
         answer = DataBase.make_multi_response_query(query, DatabaseUser.path)
@@ -38,7 +46,6 @@ class DatabaseUser:
     @staticmethod
     def delete_user_by_user_id(user_id):
         response = DatabaseUser.get_by_user_id(user_id)
-        print("user:", response)
         query = "DELETE FROM USER WHERE USER_ID = {}".format(user_id)
         DataBase.make_no_response_query(query, DatabaseUser.path)
         return response

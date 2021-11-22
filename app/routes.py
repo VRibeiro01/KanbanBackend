@@ -27,7 +27,7 @@ def get_user_by_user_name():
     username = request.args.get("username")
     if username:
         try:
-            return DatabaseUser.get_by_user_name(username).__repr__()
+            return str(DatabaseUser.get_by_user_name(username))
         except AttributeError:
             return "user was not found", 404
     else:
@@ -48,7 +48,10 @@ def add_user():
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
-        return str(DatabaseUser.delete_user_by_user_id(user_id))
+        if DatabaseUser.get_by_user_id(user_id):
+            return str(DatabaseUser.delete_user_by_user_id(user_id))
+        else:
+            return "user was not found", 404
     except AttributeError:
         return "user was not found", 404
 
@@ -56,7 +59,10 @@ def delete_user(user_id):
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user_by_user_id(user_id):
     try:
-        return str(DatabaseUser.get_by_user_id(user_id))
+        if DatabaseUser.get_by_user_id(user_id):
+            return str(DatabaseUser.get_by_user_id(user_id))
+        else:
+            return "user was not found", 404
     except AttributeError:
         return "user was not found", 404
 
@@ -102,7 +108,13 @@ def add_board():
 
 @app.route('/board/<board_id>', methods=['GET'])
 def get_board_by_board_id(board_id):
-    return str(DatabaseBoard.get_by_board_id(board_id))
+    try:
+        if DatabaseBoard.get_by_board_id(board_id):
+            return str(DatabaseBoard.get_by_board_id(board_id))
+        else:
+            return "board was not found", 404
+    except AttributeError:
+        return "board was not found", 404
 
 
 @app.route('/board/<board_id>', methods=['PUT'])
@@ -142,7 +154,13 @@ def add_column():
 
 @app.route('/column/<column_id>', methods=['GET'])
 def get_column_by_column_id(column_id):
-    return str(DatabaseColumn.get_by_column_id(column_id))
+    try:
+        if DatabaseColumn.get_by_column_id(column_id):
+            return str(DatabaseColumn.get_by_column_id(column_id))
+        else:
+            return "board was not found", 404
+    except AttributeError:
+        return "board was not found", 404
 
 
 @app.route('/column/<column_id>', methods=['PUT'])
@@ -151,7 +169,7 @@ def update_column_by_column_id(column_id):
     board_id = int(json_payload['board_id'])
     title = json_payload['title']
     position = int(json_payload['position'])
-    return DatabaseColumn.update_column_by_column_id(column_id, board_id, title, position)
+    return str(DatabaseColumn.update_column_by_column_id(column_id, board_id, title, position))
 
 
 @app.route('/column/<column_id>', methods=['DELETE'])
@@ -160,9 +178,9 @@ def delete_column(column_id):
 
 
 @app.route('/column/<column_id>/tasks', methods=['GET'])
-def get_tasks_from_column_by_column_id(board_id):
+def get_tasks_from_column_by_column_id(column_id):
     try:
-        return str(DatabaseTask.get_by_column_id(board_id))
+        return str(DatabaseTask.get_by_column_id(column_id))
     except AttributeError:
         return "user was not found", 404
 
@@ -185,7 +203,13 @@ def add_task():
 
 @app.route('/task/<task_id>', methods=['GET'])
 def get_task_by_task_id(task_id):
-    return str(DatabaseTask.get_by_task_id(task_id))
+    try:
+        if DatabaseTask.get_by_task_id(task_id):
+            return str(DatabaseTask.get_by_task_id(task_id))
+        else:
+            return "board was not found", 404
+    except AttributeError:
+        return "board was not found", 404
 
 @app.route('/board/<board_id>/columns', methods=['GET'])
 def get_columns_by_board_id(board_id):
@@ -201,7 +225,7 @@ def update_task_by_task_id(task_id):
     title = json_payload['title']
     prio = int(json_payload['prio'])
     position = int(json_payload['position'])
-    return DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position)
+    return str(DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position))
 
 
 @app.route('/task/<task_id>', methods=['DELETE'])
