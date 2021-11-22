@@ -22,6 +22,7 @@ cache:
   paths:
     - .cache/pip
     - venv/
+    - dbs/
 
 before_script:
   - python -V  # Print out python version for debugging
