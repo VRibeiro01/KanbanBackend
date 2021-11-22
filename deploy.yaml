@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: haw-world
-  namespace: <space-name>
+  namespace: project-se2
   labels:
     service: haw-world
 spec:
@@ -15,19 +15,19 @@ spec:
         service: haw-world
     spec:
       containers:
-        - image: git.haw-hamburg.de:5005/<GitLab-Gruppe(=HAW-Kennung)>/haw-world
+        - image: git.haw-hamburg.de:5005/acf040/haw-world
           name: haw-world
           ports:
             - containerPort: 80
               protocol: TCP
       imagePullSecrets:
-        - name: <secret-name>
+        - name: Kws8DTzLfPzA-_e2rcz4
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: haw-world
-  namespace: <space-name>
+  namespace: project-se2
   labels:
     service: haw-world
 spec:
