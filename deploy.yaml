@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: haw-world
+  name: be-project-se2
   namespace: project-se2
   labels:
-    service: haw-world
+    service: be-project-se2
 spec:
   selector:
     matchLabels:
-      service: haw-world
+      service: be-project-se2
   template:
     metadata:
       labels:
-        service: haw-world
+        service: be-project-se2
     spec:
       containers:
-        - image: git.haw-hamburg.de:5005/acf040/haw-world
-          name: haw-world
+        - image: git.haw-hamburg.de:5005/acf040/be-project-se2
+          name: be-project-se2
           ports:
             - containerPort: 80
               protocol: TCP
@@ -26,10 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: haw-world
+  name: be-project-se2
   namespace: project-se2
   labels:
-    service: haw-world
+    service: be-project-se2
 spec:
   ports:
     - name: http
@@ -37,5 +37,5 @@ spec:
       protocol: TCP
       targetPort: 80
   selector:
-    service: haw-world
+    service: be-project-se2
   type: ClusterIP
