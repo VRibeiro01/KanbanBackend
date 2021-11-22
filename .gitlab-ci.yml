@@ -1,4 +1,5 @@
 stages:
+  - test
   - dockerize
   - deploy
    
@@ -41,5 +42,6 @@ deploy_image:
     - kubectl apply -f deploy.yaml
 
 test:
+  stage: test
   script:
     - coverage run --source=app -m unittest test/test_user.py
