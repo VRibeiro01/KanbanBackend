@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-project-se2
+  namespace: project-se2
+  labels:
+    service: be-project-se2
+spec:
+  selector:
+    matchLabels:
+      service: be-project-se2
+  template:
+    metadata:
+      labels:
+        service: be-project-se2
+    spec:
+      containers:
+        - image: git.haw-hamburg.de:5005/acf040/be-project-se2
+          name: be-project-se2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+        - name: Kws8DTzLfPzA-_e2rcz4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: be-project-se2
+  namespace: project-se2
+  labels:
+    service: be-project-se2
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    service: be-project-se2
+  type: ClusterIP
