@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haw-world
+  namespace: <space-name>
+  labels:
+    service: haw-world
+spec:
+  selector:
+    matchLabels:
+      service: haw-world
+  template:
+    metadata:
+      labels:
+        service: haw-world
+    spec:
+      containers:
+        - image: git.haw-hamburg.de:5005/<GitLab-Gruppe(=HAW-Kennung)>/haw-world
+          name: haw-world
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+        - name: <secret-name>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haw-world
+  namespace: <space-name>
+  labels:
+    service: haw-world
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    service: haw-world
+  type: ClusterIP
