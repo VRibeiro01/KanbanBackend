@@ -28,5 +28,4 @@ deploy_image:
 
 test:
   script:
-    - coverage run --source=app -m unittest tests/test_user.py
     - coverage run --source=app -m unittest test/test_user.py
