@@ -5,6 +5,20 @@ stages:
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
    
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+    - dbs/
+
+before_script:
+  - python -V  # Print out python version for debugging
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
+
 create_image:
   stage: dockerize
   image: docker:dind
