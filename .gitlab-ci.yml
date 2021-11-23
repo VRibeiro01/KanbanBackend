@@ -6,19 +6,16 @@ stages:
   - deploy
    
 variables:
-  DOCKER_TLS_CERTDIR: "/certs"
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DOCKER_TLS_CERTDIR: "/certs"
    
 cache:
   paths:
     - .cache/pip
     - venv/
-    - dbs/
 
 before_script:
-  - apt-get -qq update && apt-get -qq install -y python
-  - apt-get -qq update
-  - apt-get -qq install -y python python-virtualenv python-pip
+  - python -V  # Print out python version for debugging
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
