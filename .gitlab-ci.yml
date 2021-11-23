@@ -16,7 +16,9 @@ cache:
     - dbs/
 
 before_script:
-  - python -m pip install -U pip
+  - apt-get -qq update && apt-get -qq install -y python
+  - apt-get -qq update
+  - apt-get -qq install -y python python-virtualenv python-pip
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
