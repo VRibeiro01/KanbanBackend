@@ -1,13 +1,13 @@
 image: python:latest
 
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DOCKER_TLS_CERTDIR: "/certs"
+
 stages:
   - test
   - dockerize
   - deploy
-   
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  DOCKER_TLS_CERTDIR: "/certs"
    
 cache:
   paths:
