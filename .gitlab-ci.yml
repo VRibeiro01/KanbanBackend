@@ -16,6 +16,7 @@ cache:
     - dbs/
 
 before_script:
+  - apt-get install -y python-pip
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
