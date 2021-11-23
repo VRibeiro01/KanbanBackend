@@ -1,26 +1,18 @@
 image: python:latest
 
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DOCKER_TLS_CERTDIR: "/certs"
+
 stages:
   - test
   - dockerize
   - deploy
    
-variables:
-  DOCKER_TLS_CERTDIR: "/certs"
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-   
 cache:
   paths:
     - .cache/pip
     - venv/
-    - dbs/
-
-before_script:
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
-
 
 create_image:
   stage: dockerize
@@ -46,4 +38,8 @@ deploy_image:
 test:
   stage: test
   script:
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
     - coverage run --source=app -m unittest test/test_user.py
