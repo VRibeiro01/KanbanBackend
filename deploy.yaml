@@ -21,7 +21,7 @@ spec:
             - containerPort: 80
               protocol: TCP
       imagePullSecrets:
-        - name: Kws8DTzLfPzA-_e2rcz4
+        - name: TAKS-BE
 ---
 apiVersion: v1
 kind: Service
