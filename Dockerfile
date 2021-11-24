@@ -17,7 +17,7 @@ COPY . /usr/src/app
 
 # For Django
 EXPOSE 5000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+CMD ["python", "start.py"]
 
 # For some other command
 # CMD ["python", "app.py"]
