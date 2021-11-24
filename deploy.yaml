@@ -18,7 +18,7 @@ spec:
         - image: git.haw-hamburg.de:5005/acf040/be-project-se2
           name: be-project-se2
           ports:
-            - containerPort: 80
+            - containerPort: 5000
               protocol: TCP
       imagePullSecrets:
         - name: TAKS-BE
@@ -35,7 +35,7 @@ spec:
     - name: http
       port: 80
       protocol: TCP
-      targetPort: 80
+      targetPort: 5000
   selector:
     service: be-project-se2
   type: ClusterIP
