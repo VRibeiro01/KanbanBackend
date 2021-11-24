@@ -15,13 +15,13 @@ spec:
         service: be-project-se2
     spec:
       containers:
-        - image: git.haw-hamburg.de:5005/acf040/be-project-se2
+        - image: git.haw-hamburg.de:5005/se24/backend:latest
           name: be-project-se2
           ports:
             - containerPort: 5000
               protocol: TCP
       imagePullSecrets:
-        - name: TAKS-BE
+        - name: pull-secret-backend
 ---
 apiVersion: v1
 kind: Service
