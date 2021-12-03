@@ -142,6 +142,7 @@ def get_columns_from_board_by_board_id(board_id):
 @app.after_request
 def apply_caching(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
     return response
 
 @app.route('/column', methods=['POST'])
