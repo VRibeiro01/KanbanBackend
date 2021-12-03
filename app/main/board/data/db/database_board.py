@@ -77,3 +77,5 @@ class DatabaseBoard:
         connection.commit()
         connection.close()
         return DatabaseBoard.get_by_board_id(user_id)
+
+
