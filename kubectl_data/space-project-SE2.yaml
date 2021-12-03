@@ -1,0 +1,6 @@
+apiVersion: tenancy.kiosk.sh/v1alpha1
+kind: Space
+metadata:
+  name: project-se2
+spec:
+  account: acf040-account

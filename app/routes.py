@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 from flask import request
@@ -215,6 +216,13 @@ def get_task_by_task_id(task_id):
             return "board was not found", 404
     except AttributeError:
         return "board was not found", 404
+
+
+@app.route('/board/<board_id>/columns', methods=['GET'])
+def get_columns_by_board_id(board_id):
+    columns = DatabaseColumn.get_by_board_id(board_id)
+    print(json.dumps(columns))
+    return json.dumps(columns)
 
 
 @app.route('/task/<task_id>', methods=['PUT'])

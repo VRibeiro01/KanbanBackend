@@ -1,0 +1,2 @@
+username: gitlab+deploy-token-1115
+password: RzsMWosLfwpRAHYuyyxy

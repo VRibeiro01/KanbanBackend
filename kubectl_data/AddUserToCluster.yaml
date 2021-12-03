@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: space-members
+  namespace: project-se2
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kiosk-space-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: acr658
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: abg919
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: acs216
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: acu765

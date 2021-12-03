@@ -13,23 +13,6 @@ class DataBase:
         connection.close()
 
     @staticmethod
-    def make_single_response_query(query, database_url):
-
-        connection = sqlite3.connect(database_url)
-        cursor = connection.cursor()
-        try:
-            cursor.execute(query)
-            msg = cursor.fetchone()
-            if msg is not None:
-                user_hash = msg[0]
-                connection.close()
-                return user_hash
-        except sqlite3.OperationalError:
-            print("Invalid query: " + query)
-            return None
-        return None
-
-    @staticmethod
     def make_multi_response_query(query, database_url):
 
         connection = sqlite3.connect(database_url)
