@@ -4,10 +4,10 @@ from app.main.board.data.db.database_task import DatabaseTask
 from app.main.user.data.db.database_user import DatabaseUser
 
 #Path für den DatenBank zulegen
-DatabaseUser.path = 'testDaten'
-DatabaseBoard.path = 'testDaten'
-DatabaseColumn.path = 'testDaten'
-DatabaseTask.path = 'testDaten'
+DatabaseUser.path = '../dbs/database'
+DatabaseBoard.path = '../dbs/database'
+DatabaseColumn.path = '../dbs/database'
+DatabaseTask.path = '../dbs/database'
 
 #Datenbank reinigen
 DatabaseUser.drop_db()
