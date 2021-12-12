@@ -14,6 +14,7 @@ class DatabaseLabel:
         try:
             sql = "CREATE TABLE LABEL(" \
                   "LABEL_ID INTEGER PRIMARY KEY AUTOINCREMENT," \
+                  "BOARD_ID INTEGER," \
                   "TITLE TEXT NOT NULL" \
                   ")"
             DataBase.make_no_response_query(sql, DatabaseLabel.path)
@@ -73,7 +74,7 @@ class DatabaseLabel:
     def insert_task(board_id, title):
         connection = sqlite3.connect(DatabaseLabel.path)
         cursor = connection.cursor()
-        query = "INSERT INTO LABEL(BOARD_ID, TITLE) VALUES('{}', '{}', '{}')" \
+        query = "INSERT INTO LABEL(BOARD_ID, TITLE) VALUES('{}', '{}')" \
             .format(board_id, title)
         cursor.execute(query)
         label_id = cursor.lastrowid

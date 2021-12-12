@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import OperationalError
 
 from app.general.database import DataBase
+from app.main.board.data.db.database_label import DatabaseLabel
 from app.main.board.data.models.Label import Label
 from app.main.board.data.models.LabelTaskRelation import LabelTaskRelation
 
@@ -33,15 +34,29 @@ class DatabaseLabelTaskRelation:
     def get_by_label_id_and_task_id(label_id, task_id):
         query = "SELECT * FROM LABEL_TASK_RELATION WHERE LABEL_ID = {} AND TASK_ID = {}".format(label_id, task_id)
         answer = DataBase.make_multi_response_query(query, DatabaseLabelTaskRelation.path)
-        if len(answer) == 1:
+        if answer and len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
                 label = LabelTaskRelation(int(user_obj[0]), int(user_obj[1]))
                 return label
-            else:
-                return user_obj
-        else:
-            AttributeError()
+        AttributeError()
+
+    @staticmethod
+    def get_labels_by_task_id(task_id):
+        query = "SELECT * FROM LABEL_TASK_RELATION WHERE TASK_ID = {}".format(task_id)
+        try:
+            answer = DataBase.make_multi_response_query(query, DatabaseLabelTaskRelation.path)
+            label_ids = []
+            for obj in answer:
+                if obj:
+                    label_relation = LabelTaskRelation(int(obj[0]), int(obj[1]))
+                    label = DatabaseLabel.get_by_label_id(label_relation.label_id)
+                    label_ids.append(label)
+                else:
+                    AttributeError()
+            return label_ids
+        except OperationalError:
+            return []
 
     @staticmethod
     def delete_task_by_task_id_and_task_id(label_id, task_id):

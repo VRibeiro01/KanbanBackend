@@ -175,15 +175,16 @@ class UserTests(unittest.TestCase):
                                                          worker=response["user_id"],
                                                          title="NEUE TASK",
                                                          prio=2,
-                                                         position=1),
+                                                         position=1,
+                                                         labels=[]),
                                                     200,
                                                     expected=[
                                                         ["column_id", response_column["column_id"]],
                                                         ["worker", response["user_id"]],
                                                         ["title", "NEUE TASK"],
                                                         ["prio", 2],
-                                                        ["position", 1]
-
+                                                        ["position", 1],
+                                                        ["labels", []]
                                                     ])
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 200)
@@ -193,15 +194,16 @@ class UserTests(unittest.TestCase):
                                       worker=response["user_id"],
                                       title="2. NEUE TASK",
                                       prio=2,
-                                      position=1),
+                                      position=1,
+                                      labels=[]),
                                  200,
                                  expected=[
                                      ["column_id", response_column["column_id"]],
                                      ["worker", response["user_id"]],
                                      ["title", "2. NEUE TASK"],
                                      ["prio", 2],
-                                     ["position", 1]
-
+                                     ["position", 1],
+                                     ["labels", []]
                                  ])
 
             response_boards = self.expectGetStatus(c, "/column/{}/tasks".format(response_column["column_id"]), 200)
@@ -213,8 +215,8 @@ class UserTests(unittest.TestCase):
                                         ["worker", response["user_id"]],
                                         ["title", "2. NEUE TASK"],
                                         ["prio", 2],
-                                        ["position", 1]
-
+                                        ["position", 1],
+                                        ["labels", []]
                                     ])
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 404)
