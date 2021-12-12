@@ -4,6 +4,8 @@ import sqlite3
 from flask import request
 from password_strength import PasswordPolicy
 
+from app.main.board.data.db.database_label import DatabaseLabel
+from app.main.board.data.db.database_label_task_relation import DatabaseLabelTaskRelation
 from app.main.user.data.db.database_user import DatabaseUser
 from app.main.board.data.db.database_board import DatabaseBoard
 from app.main.board.data.db.database_column import DatabaseColumn
@@ -21,6 +23,8 @@ DatabaseUser.create_db()
 DatabaseBoard.create_db()
 DatabaseColumn.create_db()
 DatabaseTask.create_db()
+DatabaseLabel.create_db()
+DatabaseLabelTaskRelation.create_db()
 
 
 @app.route('/user', methods=['GET'])
@@ -49,8 +53,9 @@ def add_user():
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
-        if DatabaseUser.get_by_user_id(user_id):
-            return str(DatabaseUser.delete_user_by_user_id(user_id))
+        user = DatabaseUser.delete_user_by_user_id(user_id)
+        if user:
+            return str(user)
         else:
             return "user was not found", 404
     except AttributeError:
@@ -60,8 +65,9 @@ def delete_user(user_id):
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user_by_user_id(user_id):
     try:
-        if DatabaseUser.get_by_user_id(user_id):
-            return str(DatabaseUser.get_by_user_id(user_id))
+        user = DatabaseUser.get_by_user_id(user_id)
+        if user:
+            return str(user)
         else:
             return "user was not found", 404
     except AttributeError:
@@ -110,8 +116,9 @@ def add_board():
 @app.route('/board/<board_id>', methods=['GET'])
 def get_board_by_board_id(board_id):
     try:
-        if DatabaseBoard.get_by_board_id(board_id):
-            return str(DatabaseBoard.get_by_board_id(board_id))
+        board = DatabaseBoard.get_by_board_id(board_id)
+        if board:
+            return str(board)
         else:
             return "board was not found", 404
     except AttributeError:
@@ -128,7 +135,14 @@ def update_board_by_board_id(board_id):
 
 @app.route('/board/<board_id>', methods=['DELETE'])
 def delete_board(board_id):
-    return str(DatabaseBoard.delete_board_by_board_id(board_id))
+    try:
+        board = DatabaseBoard.delete_board_by_board_id(board_id)
+        if board:
+            return str(board)
+        else:
+            return "board was not found", 404
+    except AttributeError:
+        return "board was not found", 404
 
 
 @app.route('/board/<board_id>/columns', methods=['GET'])
@@ -150,18 +164,19 @@ def add_column():
     try:
         return str(DatabaseColumn.insert_column(board_id, title, position))
     except sqlite3.IntegrityError:
-        return "board already exist", 300
+        return "column already exist", 300
 
 
 @app.route('/column/<column_id>', methods=['GET'])
 def get_column_by_column_id(column_id):
     try:
-        if DatabaseColumn.get_by_column_id(column_id):
-            return str(DatabaseColumn.get_by_column_id(column_id))
+        column = DatabaseColumn.get_by_column_id(column_id)
+        if column:
+            return str(column)
         else:
-            return "board was not found", 404
+            return "column was not found", 404
     except AttributeError:
-        return "board was not found", 404
+        return "column was not found", 404
 
 
 @app.route('/column/<column_id>', methods=['PUT'])
@@ -175,7 +190,14 @@ def update_column_by_column_id(column_id):
 
 @app.route('/column/<column_id>', methods=['DELETE'])
 def delete_column(column_id):
-    return str(DatabaseColumn.delete_column_by_column_id(column_id))
+    try:
+        column = DatabaseColumn.delete_column_by_column_id(column_id)
+        if column:
+            return str(column)
+        else:
+            return "column was not found", 404
+    except AttributeError:
+        return "column was not found", 404
 
 
 @app.route('/column/<column_id>/tasks', methods=['GET'])
@@ -199,18 +221,19 @@ def add_task():
     try:
         return str(DatabaseTask.insert_task(column_id, worker, title, prio, position))
     except sqlite3.IntegrityError:
-        return "board already exist", 300
+        return "task already exist", 300
 
 
 @app.route('/task/<task_id>', methods=['GET'])
 def get_task_by_task_id(task_id):
     try:
-        if DatabaseTask.get_by_task_id(task_id):
-            return str(DatabaseTask.get_by_task_id(task_id))
+        task = DatabaseTask.get_by_task_id(task_id)
+        if task:
+            return str(task)
         else:
-            return "board was not found", 404
+            return "task was not found", 404
     except AttributeError:
-        return "board was not found", 404
+        return "task was not found", 404
 
 
 @app.route('/board/<board_id>/columns', methods=['GET'])
@@ -232,5 +255,56 @@ def update_task_by_task_id(task_id):
 
 @app.route('/task/<task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    return str(DatabaseTask.delete_task_by_task_id(task_id))
+    try:
+        task = DatabaseTask.delete_task_by_task_id(task_id)
+        if task:
+            return str(task)
+        else:
+            return "task was not found", 404
+    except AttributeError:
+        return "task was not found", 404
 
+# --------------------------LABEL-------------------------------------------
+
+
+@app.route('/label', methods=['POST'])
+def add_label():
+    json_payload = request.json
+    title = json_payload['title']
+    board_id = int(json_payload['board_id'])
+    try:
+        return str(DatabaseLabel.insert_task(board_id, title))
+    except sqlite3.IntegrityError:
+        return "board already exist", 300
+
+
+@app.route('/label/<label_id>', methods=['GET'])
+def get_label_by_label_id(label_id):
+    try:
+        task = DatabaseLabel.get_by_label_id(label_id)
+        if task:
+            return str(task)
+        else:
+            return "label was not found", 404
+    except AttributeError:
+        return "label was not found", 404
+
+
+@app.route('/label/<label_id>', methods=['PUT'])
+def update_label_by_label_id(label_id):
+    json_payload = request.json
+    board_id = int(json_payload['board_id'])
+    title = json_payload['title']
+    return str(DatabaseLabel.update_label_by_label_id(label_id, board_id, title))
+
+
+@app.route('/label/<label_id>', methods=['DELETE'])
+def delete_label(label_id):
+    try:
+        label = DatabaseLabel.delete_label_by_task_id(label_id)
+        if label:
+            return str(label)
+        else:
+            return "label was not found", 404
+    except AttributeError:
+        return "label was not found", 404
