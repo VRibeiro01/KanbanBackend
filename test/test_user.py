@@ -252,6 +252,16 @@ class UserTests(unittest.TestCase):
                                                    ]
                                                    )
 
+            response_label2 = self.expectPostStatus(c, "/label",
+                                                   dict(board_id=response_board["board_id"],
+                                                        title="SECOND LABEL"),
+                                                   200,
+                                                   expected=[
+                                                       ["board_id", response_board["board_id"]],
+                                                       ["title", "SECOND LABEL"]
+                                                   ]
+                                                   )
+
             response_task = self.expectPostStatus(c, "/task",
                                                     dict(column_id=response_column["column_id"],
                                                          worker=response["user_id"],
@@ -268,6 +278,23 @@ class UserTests(unittest.TestCase):
                                                         ["position", 1],
                                                         ["labels", [response_label]]
                                                     ])
+
+            self.expectPutStatus(c, "/task/{}".format(response_task["task_id"]),
+                                 dict(column_id=response_column["column_id"],
+                                      worker=response["user_id"],
+                                      title="NEUE TASK",
+                                      prio=2,
+                                      position=1,
+                                      labels=[response_label["label_id"], response_label2["label_id"]]),
+                                 200,
+                                 expected=[
+                                     ["column_id", response_column["column_id"]],
+                                     ["worker", response["user_id"]],
+                                     ["title", "NEUE TASK"],
+                                     ["prio", 2],
+                                     ["position", 1],
+                                     ["labels", [response_label, response_label2]]
+                                 ])
 
             self.expectGetStatus(c, "/label/{}".format(response_label["label_id"]), 200)
 
