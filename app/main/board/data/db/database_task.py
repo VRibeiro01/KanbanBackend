@@ -104,7 +104,6 @@ class DatabaseTask:
         task_id = cursor.lastrowid
         connection.commit()
         connection.close()
-        print(label_id_list)
         for label_id in label_id_list:
             try:
                 returning = DatabaseLabelTaskRelation.get_by_label_id_and_task_id(label_id, task_id)

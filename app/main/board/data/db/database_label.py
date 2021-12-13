@@ -57,7 +57,7 @@ class DatabaseLabel:
 
     @staticmethod
     def update_label_by_label_id(label_id, board_id, title):
-        query = "UPDATE LABEL SET TITLE = '{}' SET BOARD_ID = '{}' WHERE LABEL_ID = {}"\
+        query = "UPDATE LABEL SET TITLE = '{}', BOARD_ID = '{}' WHERE LABEL_ID = {}"\
             .format(title, board_id, label_id)
         DataBase.make_no_response_query(query, DatabaseLabel.path)
         response = DatabaseLabel.get_by_label_id(label_id)
@@ -71,7 +71,7 @@ class DatabaseLabel:
         return response
 
     @staticmethod
-    def insert_task(board_id, title):
+    def insert_label(board_id, title):
         connection = sqlite3.connect(DatabaseLabel.path)
         cursor = connection.cursor()
         query = "INSERT INTO LABEL(BOARD_ID, TITLE) VALUES('{}', '{}')" \

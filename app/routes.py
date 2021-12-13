@@ -240,7 +240,6 @@ def get_task_by_task_id(task_id):
 @app.route('/board/<board_id>/columns', methods=['GET'])
 def get_columns_by_board_id(board_id):
     columns = DatabaseColumn.get_by_board_id(board_id)
-    print(json.dumps(columns))
     return json.dumps(columns)
 
 
@@ -252,7 +251,6 @@ def update_task_by_task_id(task_id):
     prio = int(json_payload['prio'])
     position = int(json_payload['position'])
     labels = list(json_payload['labels'])
-    print(labels)
     return str(DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position, labels))
 
 
@@ -276,7 +274,7 @@ def add_label():
     title = json_payload['title']
     board_id = int(json_payload['board_id'])
     try:
-        return str(DatabaseLabel.insert_task(board_id, title))
+        return str(DatabaseLabel.insert_label(board_id, title))
     except sqlite3.IntegrityError:
         return "board already exist", 300
 

@@ -7,6 +7,8 @@ import unittest
 from app.main.board.data.db.database_board import DatabaseBoard
 from app.main.board.data.db.database_column import DatabaseColumn
 from app.main.board.data.db.database_task import DatabaseTask
+from app.main.board.data.db.database_label import DatabaseLabel
+from app.main.board.data.db.database_label_task_relation import DatabaseLabelTaskRelation
 from app.main.user.data.db.database_user import DatabaseUser
 
 
@@ -23,12 +25,18 @@ class UserTests(unittest.TestCase):
         DatabaseColumn.create_db()
         DatabaseTask.path = 'database_test'
         DatabaseTask.create_db()
+        DatabaseLabel.path = 'database_test'
+        DatabaseLabel.create_db()
+        DatabaseLabelTaskRelation.path = 'database_test'
+        DatabaseLabelTaskRelation.create_db()
 
     def tearDown(self):
         DatabaseUser.drop_db()
         DatabaseBoard.drop_db()
         DatabaseColumn.drop_db()
         DatabaseTask.drop_db()
+        DatabaseLabel.drop_db()
+        DatabaseLabelTaskRelation.drop_db()
 
     def compare_returns(self, function, url, key, value, name=None):
         if key == value:
@@ -220,5 +228,66 @@ class UserTests(unittest.TestCase):
                                     ])
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 404)
+
+    def test_label(self):
+        with self.client as c:
+            print("TEST THE LABEL")
+            response = self.expectPostStatus(c, "/user", dict(username="ferdi", password="123456789"), 200,
+                                             expected=[["username", "ferdi"], ["password", "123456789"]])
+            response_board = self.expectPostStatus(c, "/board", dict(owner_id=response["user_id"], title="NEUES BOARD"),
+                                                   200, expected=[["owner_id", response["user_id"]], ["title", "NEUES BOARD"]])
+
+            response_column = self.expectPostStatus(c, "/column", dict(board_id=response_board["board_id"], title="NEUE REIHE", position=1),
+                                                    200, expected=[["board_id", response_board["board_id"]],
+                                                                   ["title", "NEUE REIHE"],
+                                                                   ["position", 1]])
+
+            response_label = self.expectPostStatus(c, "/label",
+                                                   dict(board_id=response_board["board_id"],
+                                                        title="FIRST LABEL"),
+                                                   200,
+                                                   expected=[
+                                                       ["board_id", response_board["board_id"]],
+                                                       ["title", "FIRST LABEL"]
+                                                   ]
+                                                   )
+
+            response_task = self.expectPostStatus(c, "/task",
+                                                    dict(column_id=response_column["column_id"],
+                                                         worker=response["user_id"],
+                                                         title="NEUE TASK",
+                                                         prio=2,
+                                                         position=1,
+                                                         labels=[response_label["label_id"]]),
+                                                    200,
+                                                    expected=[
+                                                        ["column_id", response_column["column_id"]],
+                                                        ["worker", response["user_id"]],
+                                                        ["title", "NEUE TASK"],
+                                                        ["prio", 2],
+                                                        ["position", 1],
+                                                        ["labels", [response_label]]
+                                                    ])
+
+            self.expectGetStatus(c, "/label/{}".format(response_label["label_id"]), 200)
+
+            self.expectPutStatus(c, "/label/{}".format(response_label["label_id"]),
+                                 dict(board_id=response_board["board_id"],
+                                      title="2. LABEL"
+                                      ),
+                                 200,
+                                 expected=[
+                                     ["board_id", response_board["board_id"]],
+                                     ["title", "2. LABEL"]
+                                 ])
+
+            self.expectDeleteStatus(c, "/label/{}".format(response_label["label_id"]), 200,
+                                    expected=[
+                                        ["board_id", response_board["board_id"]],
+                                        ["title", "2. LABEL"]
+                                    ])
+
+            self.expectGetStatus(c, "/label/{}".format(response_label["label_id"]), 404)
+
 
 
