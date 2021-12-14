@@ -58,6 +58,19 @@ class DatabaseTask:
         AttributeError()
 
     @staticmethod
+    def get_by_worker_id(worker_id):
+        query = "SELECT * FROM TASK WHERE WORKER = {}".format(worker_id)
+        mock_column_list = DataBase.make_multi_response_query(query, DatabaseTask.path)
+        board_list = []
+        for task_obj in mock_column_list:
+            if task_obj:
+                label_list = DatabaseLabelTaskRelation.get_labels_by_task_id(task_obj[0])
+                task = Task(int(task_obj[0]), int(task_obj[1]), int(task_obj[2]), task_obj[3], int(task_obj[4]),
+                            int(task_obj[6]), task_obj[5], label_list)
+                board_list.append(task)
+        return board_list
+
+    @staticmethod
     def update_task_by_task_id(task_id, user_id, title, prio, position, deadline, label_id_list):
         old_response = DatabaseTask.get_by_task_id(task_id)
         # manage labels
@@ -114,3 +127,5 @@ class DatabaseTask:
             except AssertionError:
                 DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
         return DatabaseTask.get_by_task_id(task_id)
+
+

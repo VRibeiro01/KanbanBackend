@@ -249,10 +249,12 @@ def get_task_by_task_id(task_id):
         return "task was not found", 404
 
 
-@app.route('/board/<board_id>/columns', methods=['GET'])
-def get_columns_by_board_id(board_id):
-    columns = DatabaseColumn.get_by_board_id(board_id)
-    return json.dumps(columns)
+@app.route('/task/worker/<worker_id>', methods=['GET'])
+def get_columns_by_board_id(worker_id):
+    try:
+        return str(DatabaseTask.get_by_worker_id(worker_id))
+    except AttributeError:
+        return "user was not found", 404
 
 
 @app.route('/task/<task_id>', methods=['PUT'])
