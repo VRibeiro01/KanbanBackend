@@ -106,7 +106,7 @@ def check_pw_from_user(user_id):
     return DatabaseUser.check_pw(user_id, pw)
 
 
-# --------------------------BOARD-------------------------------------------
+# --------------------------BOARD------------------------------------------
 
 @app.route('/board', methods=['POST'])
 def add_board():
