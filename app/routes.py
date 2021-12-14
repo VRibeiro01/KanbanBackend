@@ -166,6 +166,7 @@ def get_columns_from_board_by_board_id(board_id):
 #     response.headers["Access-Control-Allow-Headers"] = "*"
 #     return response
 
+
 @app.route('/column', methods=['POST'])
 def add_column():
     json_payload = request.json
