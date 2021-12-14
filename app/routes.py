@@ -11,6 +11,7 @@ from app.main.board.data.db.database_board import DatabaseBoard
 from app.main.board.data.db.database_column import DatabaseColumn
 from app.main.board.data.db.database_task import DatabaseTask
 from app import app
+import test.testdaten as test_daten
 
 policy = PasswordPolicy.from_names(
     length=8,
@@ -340,3 +341,8 @@ def delete_label(label_id):
             return "label was not found", 404
     except AttributeError:
         return "label was not found", 404
+
+@app.route('/fill_data', methods=['GET'])
+def fill_test_data():
+    test_daten.run()
+    return "inserted"
