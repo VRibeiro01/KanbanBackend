@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from sqlite3 import OperationalError
 
@@ -19,6 +20,7 @@ class DatabaseTask:
                   "WORKER INTEGER," \
                   "TITLE TEXT NOT NULL," \
                   "PRIO INTEGER," \
+                  "DEADLINE REAL," \
                   "POSITION INTEGER" \
                   ")"
             DataBase.make_no_response_query(sql, DatabaseTask.path)
@@ -40,7 +42,8 @@ class DatabaseTask:
         board_list = []
         for task_obj in mock_column_list:
             label_list = DatabaseLabelTaskRelation.get_labels_by_task_id(int(task_obj[0]))
-            board_list.append(Task(int(task_obj[0]), int(task_obj[1]), int(task_obj[2]), task_obj[3], int(task_obj[4]), int(task_obj[5]), label_list))
+            print(task_obj)
+            board_list.append(Task(int(task_obj[0]), int(task_obj[1]), int(task_obj[2]), task_obj[3], int(task_obj[4]), int(task_obj[6]), task_obj[5], label_list))
         return board_list
 
     @staticmethod
@@ -51,12 +54,13 @@ class DatabaseTask:
             task_obj = answer[0]
             if task_obj:
                 label_list = DatabaseLabelTaskRelation.get_labels_by_task_id(task_id)
-                task = Task(int(task_obj[0]), int(task_obj[1]), int(task_obj[2]), task_obj[3], int(task_obj[4]), int(task_obj[5]), label_list)
+                print(task_obj)
+                task = Task(int(task_obj[0]), int(task_obj[1]), int(task_obj[2]), task_obj[3], int(task_obj[4]), int(task_obj[6]), task_obj[5], label_list)
                 return task
         AttributeError()
 
     @staticmethod
-    def update_task_by_task_id(task_id, user_id, title, prio, position, label_id_list):
+    def update_task_by_task_id(task_id, user_id, title, prio, position, deadline, label_id_list):
         old_response = DatabaseTask.get_by_task_id(task_id)
         # manage labels
         for label_saved in old_response.labels:
@@ -70,8 +74,8 @@ class DatabaseTask:
             except AssertionError:
                 DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
 
-        query = "UPDATE TASK SET WORKER = '{}', TITLE = '{}', PRIO = '{}', POSITION = '{}' WHERE TASK_ID = {}"\
-            .format(user_id, title, prio, position, task_id)
+        query = "UPDATE TASK SET WORKER = '{}', TITLE = '{}', PRIO = '{}', POSITION = '{}', DEADLINE = '{}' WHERE TASK_ID = {}"\
+            .format(user_id, title, prio, position, deadline, task_id)
         DataBase.make_no_response_query(query, DatabaseTask.path)
         for label_id in label_id_list:
             try:
@@ -95,11 +99,11 @@ class DatabaseTask:
         return response
 
     @staticmethod
-    def insert_task(column_id, user_id, title, prio, position, label_id_list):
+    def insert_task(column_id, user_id, title, prio, position, deadline, label_id_list):
         connection = sqlite3.connect(DatabaseTask.path)
         cursor = connection.cursor()
-        query = "INSERT INTO TASK(COLUMN_ID, WORKER, TITLE, PRIO, POSITION) VALUES('{}', '{}', '{}', {}, {})" \
-            .format(column_id, user_id, title, prio, position)
+        query = "INSERT INTO TASK(COLUMN_ID, WORKER, TITLE, PRIO, POSITION, DEADLINE) VALUES('{}', '{}', '{}', {}, {}, {})" \
+            .format(column_id, user_id, title, prio, position, deadline)
         cursor.execute(query)
         task_id = cursor.lastrowid
         connection.commit()

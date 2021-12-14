@@ -218,9 +218,10 @@ def add_task():
     title = json_payload['title']
     prio = int(json_payload['prio'])
     position = int(json_payload['position'])
+    deadline = float(json_payload['deadline'])
     labels = list(json_payload['labels'])
     try:
-        return str(DatabaseTask.insert_task(column_id, worker, title, prio, position, labels))
+        return str(DatabaseTask.insert_task(column_id, worker, title, prio, position, deadline, labels))
     except sqlite3.IntegrityError:
         return "task already exist", 300
 
@@ -250,8 +251,9 @@ def update_task_by_task_id(task_id):
     title = json_payload['title']
     prio = int(json_payload['prio'])
     position = int(json_payload['position'])
+    deadline = float(json_payload['deadline'])
     labels = list(json_payload['labels'])
-    return str(DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position, labels))
+    return str(DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position, deadline, labels))
 
 
 @app.route('/task/<task_id>', methods=['DELETE'])

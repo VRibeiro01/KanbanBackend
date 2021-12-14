@@ -1,3 +1,4 @@
+import datetime
 import json
 from json import JSONDecodeError
 
@@ -177,13 +178,14 @@ class UserTests(unittest.TestCase):
                                                     200, expected=[["board_id", response_board["board_id"]],
                                                                    ["title", "NEUE REIHE"],
                                                                    ["position", 1]])
-
+            now_time = datetime.datetime.now()
             response_task = self.expectPostStatus(c, "/task",
                                                     dict(column_id=response_column["column_id"],
                                                          worker=response["user_id"],
                                                          title="NEUE TASK",
                                                          prio=2,
                                                          position=1,
+                                                         deadline=now_time.timestamp(),
                                                          labels=[]),
                                                     200,
                                                     expected=[
@@ -192,17 +194,20 @@ class UserTests(unittest.TestCase):
                                                         ["title", "NEUE TASK"],
                                                         ["prio", 2],
                                                         ["position", 1],
+                                                        ["deadline", now_time.timestamp()],
                                                         ["labels", []]
                                                     ])
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 200)
 
+            now_time = datetime.datetime.now()
             self.expectPutStatus(c, "/task/{}".format(response_task["task_id"]),
                                  dict(column_id=response_column["column_id"],
                                       worker=response["user_id"],
                                       title="2. NEUE TASK",
                                       prio=2,
                                       position=1,
+                                      deadline=now_time.timestamp(),
                                       labels=[]),
                                  200,
                                  expected=[
@@ -211,6 +216,7 @@ class UserTests(unittest.TestCase):
                                      ["title", "2. NEUE TASK"],
                                      ["prio", 2],
                                      ["position", 1],
+                                     ["deadline", now_time.timestamp()],
                                      ["labels", []]
                                  ])
 
@@ -224,6 +230,7 @@ class UserTests(unittest.TestCase):
                                         ["title", "2. NEUE TASK"],
                                         ["prio", 2],
                                         ["position", 1],
+                                        ["deadline", now_time.timestamp()],
                                         ["labels", []]
                                     ])
 
@@ -262,12 +269,14 @@ class UserTests(unittest.TestCase):
                                                    ]
                                                    )
 
+            now_time = datetime.datetime.now()
             response_task = self.expectPostStatus(c, "/task",
                                                     dict(column_id=response_column["column_id"],
                                                          worker=response["user_id"],
                                                          title="NEUE TASK",
                                                          prio=2,
                                                          position=1,
+                                                         deadline=now_time.timestamp(),
                                                          labels=[response_label["label_id"]]),
                                                     200,
                                                     expected=[
@@ -276,15 +285,17 @@ class UserTests(unittest.TestCase):
                                                         ["title", "NEUE TASK"],
                                                         ["prio", 2],
                                                         ["position", 1],
+                                                        ["deadline", now_time.timestamp()],
                                                         ["labels", [response_label]]
                                                     ])
-
+            now_time = datetime.datetime.now()
             self.expectPutStatus(c, "/task/{}".format(response_task["task_id"]),
                                  dict(column_id=response_column["column_id"],
                                       worker=response["user_id"],
                                       title="NEUE TASK",
                                       prio=2,
                                       position=1,
+                                      deadline=now_time.timestamp(),
                                       labels=[response_label["label_id"], response_label2["label_id"]]),
                                  200,
                                  expected=[
@@ -293,6 +304,7 @@ class UserTests(unittest.TestCase):
                                      ["title", "NEUE TASK"],
                                      ["prio", 2],
                                      ["position", 1],
+                                     ["deadline", now_time.timestamp()],
                                      ["labels", [response_label, response_label2]]
                                  ])
 
