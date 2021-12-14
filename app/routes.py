@@ -260,13 +260,28 @@ def get_columns_by_board_id(worker_id):
 @app.route('/task/<task_id>', methods=['PUT'])
 def update_task_by_task_id(task_id):
     json_payload = request.json
-    worker = int(json_payload['worker'])
-    title = json_payload['title']
-    prio = int(json_payload['prio'])
-    position = int(json_payload['position'])
-    deadline = float(json_payload['deadline'])
-    labels = list(json_payload['labels'])
-    return str(DatabaseTask.update_task_by_task_id(task_id, worker, title, prio, position, deadline, labels))
+    worker = None
+    if "worker" in json_payload:
+        worker = int(json_payload['worker'])
+    title = None
+    if "title" in json_payload:
+        title = json_payload['title']
+    prio = None
+    if "prio" in json_payload:
+        prio = int(json_payload['prio'])
+    position = None
+    if "position" in json_payload:
+        position = int(json_payload['position'])
+    deadline = None
+    if "deadline" in json_payload:
+        deadline = float(json_payload['deadline'])
+    labels = None
+    if "labels" in json_payload:
+        labels = list(json_payload['labels'])
+    column_id = None
+    if "column_id" in json_payload:
+        column_id = int(json_payload['column_id'])
+    return str(DatabaseTask.update_task_by_task_id(task_id, column_id, worker, title, prio, position, deadline, labels))
 
 
 @app.route('/task/<task_id>', methods=['DELETE'])

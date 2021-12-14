@@ -71,30 +71,71 @@ class DatabaseTask:
         return board_list
 
     @staticmethod
-    def update_task_by_task_id(task_id, user_id, title, prio, position, deadline, label_id_list):
+    def update_task_by_task_id(task_id, column_id, user_id, title, prio, position, deadline, label_id_list):
         old_response = DatabaseTask.get_by_task_id(task_id)
         # manage labels
-        for label_saved in old_response.labels:
-            if label_saved.label_id not in label_id_list:
-                DatabaseLabelTaskRelation.delete_task_by_task_id_and_task_id(label_saved.label_id, task_id)
-        for label_id in label_id_list:
-            try:
-                returning = DatabaseLabelTaskRelation.get_by_label_id_and_task_id(label_id, task_id)
-                if not returning:
-                    DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
-            except AssertionError:
-                DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
 
-        query = "UPDATE TASK SET WORKER = '{}', TITLE = '{}', PRIO = '{}', POSITION = '{}', DEADLINE = '{}' WHERE TASK_ID = {}"\
-            .format(user_id, title, prio, position, deadline, task_id)
-        DataBase.make_no_response_query(query, DatabaseTask.path)
-        for label_id in label_id_list:
-            try:
-                returning = DatabaseLabelTaskRelation.get_by_label_id_and_task_id(label_id, task_id)
-                if not returning:
+        query = "UPDATE TASK SET "
+        first = True
+        if user_id:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "WORKER = '{}'".format(user_id)
+        if column_id:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "COLUMN_ID = '{}'".format(column_id)
+        if title:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "TITLE = '{}'".format(title)
+        if prio:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "PRIO = '{}'".format(prio)
+        if position:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "POSITION = '{}'".format(position)
+        if deadline:
+            if not first:
+                query += ", "
+            else:
+                first = False
+            query += "DEADLINE = '{}'".format(deadline)
+
+        if label_id_list:
+            for label_saved in old_response.labels:
+                if label_saved.label_id not in label_id_list:
+                    DatabaseLabelTaskRelation.delete_task_by_task_id_and_task_id(label_saved.label_id, task_id)
+            for label_id in label_id_list:
+                try:
+                    returning = DatabaseLabelTaskRelation.get_by_label_id_and_task_id(label_id, task_id)
+                    if not returning:
+                        DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
+                except AssertionError:
                     DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
-            except AttributeError:
-                DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
+
+        query += " WHERE TASK_ID = {}".format(task_id)
+        DataBase.make_no_response_query(query, DatabaseTask.path)
+        if label_id_list:
+            for label_id in label_id_list:
+                try:
+                    returning = DatabaseLabelTaskRelation.get_by_label_id_and_task_id(label_id, task_id)
+                    if not returning:
+                        DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
+                except AttributeError:
+                    DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
 
         response = DatabaseTask.get_by_task_id(task_id)
         return response
