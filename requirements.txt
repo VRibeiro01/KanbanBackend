@@ -4,3 +4,5 @@ password_strength
 coverage
 pytest
 pytest-cov
+flask-cors
+
