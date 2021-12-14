@@ -70,6 +70,16 @@ class DatabaseUser:
         else:
             AttributeError()
 
+    @classmethod
+    def check_pw(cls, user_id, pw):
+        try:
+            if DatabaseUser.get_by_user_id(user_id).password == pw:
+                return True, 200
+            else:
+                return True, 404
+        except AttributeError:
+            return False
+
     @staticmethod
     def insert_user(username, pw):
         connection = sqlite3.connect(DatabaseUser.path)
@@ -80,4 +90,6 @@ class DatabaseUser:
         connection.commit()
         connection.close()
         return DatabaseUser.get_by_user_id(user_id)
+
+
 

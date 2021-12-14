@@ -105,6 +105,9 @@ class UserTests(unittest.TestCase):
                                  expected=[["username", "ferdinando"], ["password", "123456789"]]
                                  )
 
+            self.expectGetStatus(c, "/user/{}/check_pw?password={}".format(response["user_id"], "123456789"), 200)
+            self.expectGetStatus(c, "/user/{}/check_pw?password={}".format(response["user_id"], "1234"), 404)
+
             self.expectDeleteStatus(c, "/user/{}".format(response["user_id"]),
                                     200,
                                     expected=[["username", "ferdinando"], ["password", "123456789"]])

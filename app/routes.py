@@ -100,6 +100,12 @@ def get_boards_from_user_by_user_id(user_id):
     return str(DatabaseBoard.get_by_user_id(user_id))
 
 
+@app.route('/user/<user_id>/check_pw', methods=['GET'])
+def check_pw_from_user(user_id):
+    pw = request.args.get("password")
+    return DatabaseUser.check_pw(user_id, pw)
+
+
 # --------------------------BOARD-------------------------------------------
 
 @app.route('/board', methods=['POST'])
