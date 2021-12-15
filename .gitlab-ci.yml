@@ -32,11 +32,15 @@ deploy_image:
   image: $CI_REGISTRY/icc/kubectl:v1.19.10
   environment:
     name: k8.informatik.haw-hamburg.de
+  only:
+    - main
   script:
     - kubectl apply -f deploy.yaml
 
 test:
   stage: test
+  only:
+    - main
   script:
     - pip install virtualenv
     - virtualenv venv
