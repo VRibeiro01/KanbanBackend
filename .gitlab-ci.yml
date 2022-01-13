@@ -19,6 +19,8 @@ create_image:
   image: docker:dind
   services:
     - docker:dind
+  only:
+    - main
   tags:
     - dind
     - docker
@@ -39,8 +41,6 @@ deploy_image:
 
 test:
   stage: test
-  only:
-    - main
   script:
     - pip install virtualenv
     - virtualenv venv
