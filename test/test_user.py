@@ -203,6 +203,9 @@ class UserTests(unittest.TestCase):
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 200)
             return_tasks_from_user = self.expectGetStatus(c, "/task/worker/{}".format(response["user_id"]), 200)
+            print(return_tasks_from_user)
+            return_tasks_from_user[0]["position"] = 0
+            response_task["position"] = 0
             self.assertEqual(return_tasks_from_user, [response_task])
 
             now_time = datetime.datetime.now()
@@ -234,7 +237,7 @@ class UserTests(unittest.TestCase):
                                         ["worker", response["user_id"]],
                                         ["title", "2. NEUE TASK"],
                                         ["prio", 2],
-                                        ["position", 1],
+                                        ["position", 0],
                                         ["deadline", now_time.timestamp()],
                                         ["labels", []]
                                     ])

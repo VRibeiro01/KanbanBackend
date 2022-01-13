@@ -257,7 +257,9 @@ def add_task():
     deadline = float(json_payload['deadline'])
     labels = list(json_payload['labels'])
     try:
-        return str(DatabaseTask.insert_task(column_id, worker, title, prio, position, deadline, labels))
+        new_task = DatabaseTask.insert_task(column_id, worker, title, prio, position, deadline, labels)
+        DatabaseTask.restructure_positions(new_task.column_id, new_task.column_id, new_task)
+        return str(new_task)
     except sqlite3.IntegrityError:
         return "task already exist", 300
 
@@ -284,6 +286,7 @@ def get_columns_by_board_id(worker_id):
 
 @app.route('/task/<task_id>', methods=['PUT'])
 def update_task_by_task_id(task_id):
+    task = DatabaseTask.get_by_task_id(task_id)
     json_payload = request.json
     worker = None
     if "worker" in json_payload:
@@ -306,14 +309,18 @@ def update_task_by_task_id(task_id):
     column_id = None
     if "column_id" in json_payload:
         column_id = int(json_payload['column_id'])
-    return str(DatabaseTask.update_task_by_task_id(task_id, column_id, worker, title, prio, position, deadline, labels))
+    new_task = DatabaseTask.update_task_by_task_id(task_id, column_id, worker, title, prio, position, deadline, labels)
+    DatabaseTask.restructure_positions(task.column_id, new_task.column_id, task)
+    return str(new_task)
 
 
 @app.route('/task/<task_id>', methods=['DELETE'])
 def delete_task(task_id):
     try:
-        task = DatabaseTask.delete_task_by_task_id(task_id)
+        task = DatabaseTask.get_by_task_id(task_id)
+        new_task = DatabaseTask.delete_task_by_task_id(task_id)
         if task:
+            DatabaseTask.restructure_positions(task.column_id, new_task.column_id, task)
             return str(task)
         else:
             return "task was not found", 404
