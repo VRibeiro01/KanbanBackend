@@ -92,7 +92,6 @@ class DatabaseUser:
         if len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
-                print(user_obj)
                 user = User(int(user_obj[0]), user_obj[1], user_obj[2], user_obj[3], float(user_obj[4]))
                 return user
             else:

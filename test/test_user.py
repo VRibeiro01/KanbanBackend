@@ -99,7 +99,6 @@ class UserTests(unittest.TestCase):
 
             response_session_id = self.expectPutStatus(c, "/user/login", dict(username="ferdi",password="123456789"), 200)
 
-            print(response_session_id)
             self.expectGetStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]), 200)
 
             self.expectPutStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]),
@@ -203,7 +202,6 @@ class UserTests(unittest.TestCase):
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 200)
             return_tasks_from_user = self.expectGetStatus(c, "/task/worker/{}".format(response["user_id"]), 200)
-            print(return_tasks_from_user)
             return_tasks_from_user[0]["position"] = 0
             response_task["position"] = 0
             self.assertEqual(return_tasks_from_user, [response_task])

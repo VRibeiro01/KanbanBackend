@@ -74,7 +74,6 @@ class DatabaseTask:
     def update_task_by_task_id(task_id, column_id, user_id, title, prio, position, deadline, label_id_list):
         old_response = DatabaseTask.get_by_task_id(task_id)
         # manage labels
-        print(task_id, column_id, user_id, title, prio, position, deadline, label_id_list)
 
         query = "UPDATE TASK SET "
         first = True
@@ -128,7 +127,6 @@ class DatabaseTask:
                     DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
 
         query += " WHERE TASK_ID = {}".format(task_id)
-        print(query)
         DataBase.make_no_response_query(query, DatabaseTask.path)
         if label_id_list:
             for label_id in label_id_list:
