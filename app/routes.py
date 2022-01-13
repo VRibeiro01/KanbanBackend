@@ -1,3 +1,4 @@
+import datetime
 import json
 import sqlite3
 
@@ -51,14 +52,42 @@ def add_user():
         return "username already exist", 300
 
 
+@app.route('/user/login', methods=['PUT'])
+def login_user():
+    json_payload = request.json
+    username = json_payload['username']
+    password = json_payload['password']
+    try:
+        user = DatabaseUser.get_by_user_name(username)
+        DatabaseUser.check_pw(user.user_id, password)
+        session_id = DatabaseUser.get_new_session_token(user.user_id)
+        return str(session_id), 200
+    except AttributeError:
+        return "user was not found", 404
+
+
+@app.route('/user/<user_id>/logout', methods=['PUT'])
+def logout_user(user_id):
+    try:
+        DatabaseUser.delete_session_token(user_id)
+        return "User logged out"
+    except AttributeError:
+        return "user was not found", 404
+
+
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
-        user = DatabaseUser.delete_user_by_user_id(user_id)
-        if user:
-            return str(user)
+        session_token = request.args.get("session_token")
+        user = DatabaseUser.get_by_user_id(user_id)
+        if session_token == user.session_token and user.vali_date_from_token and user.vali_date_from_token > datetime.datetime.now().timestamp():
+            user = DatabaseUser.delete_user_by_user_id(user_id)
+            if user:
+                return str(user)
+            else:
+                return "user was not found", 404
         else:
-            return "user was not found", 404
+            return "user was not logged in", 400
     except AttributeError:
         return "user was not found", 404
 
@@ -68,7 +97,12 @@ def get_user_by_user_id(user_id):
     try:
         user = DatabaseUser.get_by_user_id(user_id)
         if user:
-            return str(user)
+            session_token = request.args.get("session_token")
+            user = DatabaseUser.get_by_user_id(user_id)
+            if session_token == user.session_token and user.vali_date_from_token and user.vali_date_from_token > datetime.datetime.now().timestamp():
+                return str(user)
+            else:
+                return "user was not logged in", 400
         else:
             return "user was not found", 404
     except AttributeError:
@@ -80,18 +114,13 @@ def update_user_by_user_id(user_id):
     json_payload = request.json
     username = json_payload['username']
     password = json_payload['password']
-    return str(DatabaseUser.update_user_by_user_id(user_id, username, password))
-
-
-@app.route('/user/<user_id>/check_pw', methods=['GET'])
-def check_pw(user_id):
-    password = request.args.get("password")
     try:
+        session_token = request.args.get("session_token")
         user = DatabaseUser.get_by_user_id(user_id)
-        if user.password == password:
-            return "password is correct", 200
+        if session_token == user.session_token and user.vali_date_from_token and user.vali_date_from_token > datetime.datetime.now().timestamp():
+                return str(DatabaseUser.update_user_by_user_id(user_id, username, password))
         else:
-            return "password is not correct", 404
+            return "user was not logged in", 400
     except AttributeError:
         return "user was not found", 404
 
@@ -99,12 +128,6 @@ def check_pw(user_id):
 @app.route('/user/<user_id>/boards', methods=['GET'])
 def get_boards_from_user_by_user_id(user_id):
     return str(DatabaseBoard.get_by_user_id(user_id))
-
-
-@app.route('/user/<user_id>/check_pw', methods=['GET'])
-def check_pw_from_user(user_id):
-    pw = request.args.get("password")
-    return DatabaseUser.check_pw(user_id, pw)
 
 
 # --------------------------BOARD------------------------------------------
@@ -341,6 +364,7 @@ def delete_label(label_id):
             return "label was not found", 404
     except AttributeError:
         return "label was not found", 404
+
 
 @app.route('/fill_data', methods=['GET'])
 def fill_test_data():
