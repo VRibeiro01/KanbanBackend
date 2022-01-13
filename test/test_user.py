@@ -95,24 +95,24 @@ class UserTests(unittest.TestCase):
             response = self.expectPostStatus(c, "/user",
                                              dict(username="ferdi",password="123456789"),
                                              200,
-                                             expected=[["username", "ferdi"],["password", "123456789"]])
+                                             expected=[["username", "ferdi"]])
 
-            self.expectGetStatus(c, "/user/{}".format(response["user_id"]), 200)
+            response_session_id = self.expectPutStatus(c, "/user/login", dict(username="ferdi",password="123456789"), 200)
 
-            self.expectPutStatus(c, "/user/{}".format(response["user_id"]),
+            print(response_session_id)
+            self.expectGetStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]), 200)
+
+            self.expectPutStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]),
                                  dict(username="ferdinando", password="123456789"),
                                  200,
-                                 expected=[["username", "ferdinando"], ["password", "123456789"]]
+                                 expected=[["username", "ferdinando"]]
                                  )
 
-            self.expectGetStatus(c, "/user/{}/check_pw?password={}".format(response["user_id"], "123456789"), 200)
-            self.expectGetStatus(c, "/user/{}/check_pw?password={}".format(response["user_id"], "1234"), 404)
-
-            self.expectDeleteStatus(c, "/user/{}".format(response["user_id"]),
+            self.expectDeleteStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]),
                                     200,
-                                    expected=[["username", "ferdinando"], ["password", "123456789"]])
+                                    expected=[["username", "ferdinando"]])
 
-            self.expectGetStatus(c, "/user/{}".format(response["user_id"]), 404)
+            self.expectGetStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]), 404)
 
     def test_board(self):
         with self.client as c:
@@ -120,7 +120,7 @@ class UserTests(unittest.TestCase):
             response = self.expectPostStatus(c, "/user",
                                              dict(username="ferdi",password="123456789"),
                                              200,
-                                             expected=[["username", "ferdi"],["password", "123456789"]])
+                                             expected=[["username", "ferdi"]])
 
             response_board = self.expectPostStatus(c, "/board",
                                                    dict(owner_id=response["user_id"],title="NEUES BOARD"),
@@ -146,7 +146,7 @@ class UserTests(unittest.TestCase):
         with self.client as c:
             print("TEST THE COLUMN")
             response = self.expectPostStatus(c, "/user", dict(username="ferdi", password="123456789"), 200,
-                                             expected=[["username", "ferdi"], ["password", "123456789"]])
+                                             expected=[["username", "ferdi"]])
             response_board = self.expectPostStatus(c, "/board", dict(owner_id=response["user_id"], title="NEUES BOARD"),
                                                    200, expected=[["owner_id", response["user_id"]], ["title", "NEUES BOARD"]])
 
@@ -173,7 +173,7 @@ class UserTests(unittest.TestCase):
         with self.client as c:
             print("TEST THE TASK")
             response = self.expectPostStatus(c, "/user", dict(username="ferdi", password="123456789"), 200,
-                                             expected=[["username", "ferdi"], ["password", "123456789"]])
+                                             expected=[["username", "ferdi"]])
             response_board = self.expectPostStatus(c, "/board", dict(owner_id=response["user_id"], title="NEUES BOARD"),
                                                    200, expected=[["owner_id", response["user_id"]], ["title", "NEUES BOARD"]])
 
@@ -245,7 +245,7 @@ class UserTests(unittest.TestCase):
         with self.client as c:
             print("TEST THE LABEL")
             response = self.expectPostStatus(c, "/user", dict(username="ferdi", password="123456789"), 200,
-                                             expected=[["username", "ferdi"], ["password", "123456789"]])
+                                             expected=[["username", "ferdi"]])
             response_board = self.expectPostStatus(c, "/board", dict(owner_id=response["user_id"], title="NEUES BOARD"),
                                                    200, expected=[["owner_id", response["user_id"]], ["title", "NEUES BOARD"]])
 
