@@ -59,9 +59,11 @@ def login_user():
     password = json_payload['password']
     try:
         user = DatabaseUser.get_by_user_name(username)
-        DatabaseUser.check_pw(user.user_id, password)
-        session_id = DatabaseUser.get_new_session_token(user.user_id)
-        return str(session_id), 200
+        if DatabaseUser.check_pw(user.user_id, password):
+            session_id = DatabaseUser.get_new_session_token(user.user_id)
+            return str(session_id), 200
+        else:
+            return "login failed", 400
     except AttributeError:
         return "user was not found", 404
 

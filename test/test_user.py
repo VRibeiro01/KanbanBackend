@@ -74,10 +74,11 @@ class UserTests(unittest.TestCase):
             expected = []
         response = c.put(url, json=form)
         self.compare_returns("PUT", url, response.status_code, status, name="status")
-        response_json = json.loads(response.data)
-        for expected_item in expected:
-            self.compare_returns("PUT", url, response_json[expected_item[0]], expected_item[1], name=expected_item[0])
-        return response_json
+        if response.status_code == 200:
+            response_json = json.loads(response.data)
+            for expected_item in expected:
+                self.compare_returns("PUT", url, response_json[expected_item[0]], expected_item[1], name=expected_item[0])
+            return response_json
 
     def expectDeleteStatus(self, c, url, status, expected=None):
         if expected is None:
@@ -96,6 +97,8 @@ class UserTests(unittest.TestCase):
                                              dict(username="ferdi",password="123456789"),
                                              200,
                                              expected=[["username", "ferdi"]])
+
+            self.expectPutStatus(c, "/user/login", dict(username="ferdi", password="12"), 400)
 
             response_session_id = self.expectPutStatus(c, "/user/login", dict(username="ferdi",password="123456789"), 200)
 

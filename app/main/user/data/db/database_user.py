@@ -99,13 +99,13 @@ class DatabaseUser:
         else:
             AttributeError()
 
-    @classmethod
-    def check_pw(cls, user_id, pw):
+    @staticmethod
+    def check_pw(user_id, pw):
         try:
             if DatabaseUser.get_by_user_id(user_id).password == pw:
-                return True, 200
+                return True
             else:
-                return True, 404
+                return False
         except AttributeError:
             return False
 
