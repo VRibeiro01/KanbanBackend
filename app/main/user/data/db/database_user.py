@@ -92,7 +92,6 @@ class DatabaseUser:
         if len(answer) == 1:
             user_obj = answer[0]
             if user_obj:
-                print(user_obj)
                 user = User(int(user_obj[0]), user_obj[1], user_obj[2], user_obj[3], float(user_obj[4]))
                 return user
             else:
@@ -100,13 +99,13 @@ class DatabaseUser:
         else:
             AttributeError()
 
-    @classmethod
-    def check_pw(cls, user_id, pw):
+    @staticmethod
+    def check_pw(user_id, pw):
         try:
             if DatabaseUser.get_by_user_id(user_id).password == pw:
-                return True, 200
+                return True
             else:
-                return True, 404
+                return False
         except AttributeError:
             return False
 

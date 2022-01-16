@@ -74,10 +74,11 @@ class UserTests(unittest.TestCase):
             expected = []
         response = c.put(url, json=form)
         self.compare_returns("PUT", url, response.status_code, status, name="status")
-        response_json = json.loads(response.data)
-        for expected_item in expected:
-            self.compare_returns("PUT", url, response_json[expected_item[0]], expected_item[1], name=expected_item[0])
-        return response_json
+        if response.status_code == 200:
+            response_json = json.loads(response.data)
+            for expected_item in expected:
+                self.compare_returns("PUT", url, response_json[expected_item[0]], expected_item[1], name=expected_item[0])
+            return response_json
 
     def expectDeleteStatus(self, c, url, status, expected=None):
         if expected is None:
@@ -97,9 +98,10 @@ class UserTests(unittest.TestCase):
                                              200,
                                              expected=[["username", "ferdi"]])
 
+            self.expectPutStatus(c, "/user/login", dict(username="ferdi", password="12"), 400)
+
             response_session_id = self.expectPutStatus(c, "/user/login", dict(username="ferdi",password="123456789"), 200)
 
-            print(response_session_id)
             self.expectGetStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]), 200)
 
             self.expectPutStatus(c, "/user/{}?session_token={}".format(response["user_id"], response_session_id["session_id"]),
@@ -203,6 +205,8 @@ class UserTests(unittest.TestCase):
 
             self.expectGetStatus(c, "/task/{}".format(response_task["task_id"]), 200)
             return_tasks_from_user = self.expectGetStatus(c, "/task/worker/{}".format(response["user_id"]), 200)
+            return_tasks_from_user[0]["position"] = 0
+            response_task["position"] = 0
             self.assertEqual(return_tasks_from_user, [response_task])
 
             now_time = datetime.datetime.now()
@@ -234,7 +238,7 @@ class UserTests(unittest.TestCase):
                                         ["worker", response["user_id"]],
                                         ["title", "2. NEUE TASK"],
                                         ["prio", 2],
-                                        ["position", 1],
+                                        ["position", 0],
                                         ["deadline", now_time.timestamp()],
                                         ["labels", []]
                                     ])

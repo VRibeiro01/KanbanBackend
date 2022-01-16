@@ -101,7 +101,7 @@ class DatabaseTask:
             else:
                 first = False
             query += "PRIO = '{}'".format(prio)
-        if position:
+        if position is not None:
             if not first:
                 query += ", "
             else:
@@ -151,6 +151,12 @@ class DatabaseTask:
         return response
 
     @staticmethod
+    def restructure_positions(column_id, column_id1, task):
+        DatabaseTask.restructure_positions_of_column(column_id1, task)
+        if column_id != column_id1:
+            DatabaseTask.restructure_positions_of_column(column_id, task)
+
+    @staticmethod
     def insert_task(column_id, user_id, title, prio, position, deadline, label_id_list):
         connection = sqlite3.connect(DatabaseTask.path)
         cursor = connection.cursor()
@@ -168,5 +174,22 @@ class DatabaseTask:
             except AssertionError:
                 DatabaseLabelTaskRelation.insert_task_label_relation(label_id, task_id)
         return DatabaseTask.get_by_task_id(task_id)
+
+    @staticmethod
+    def restructure_positions_of_column(column_id1, task):
+        list_of_tasks = DatabaseTask.get_by_column_id(column_id1)
+        for x in range(len(list_of_tasks)):
+            if list_of_tasks[x].task_id != task.task_id and list_of_tasks[x].position == task.position:
+                list_of_tasks[x].position = list_of_tasks[x].position + 0.5
+        sorted_list_by_position = sorted(list_of_tasks, key=lambda temp_task: temp_task.position)
+        for x in range(len(sorted_list_by_position)):
+            new_task = sorted_list_by_position[x]
+            DatabaseTask.update_task_by_task_id(new_task.task_id, None, None, None, None, x, None, None)
+
+
+
+
+
+
 
 
